@@ -8,10 +8,7 @@ use Auth;
 
 class ExpenseCategoriesController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,10 +16,8 @@ class ExpenseCategoriesController extends Controller
      */
     public function index()
     {
-        //get a list of all items in inventory
         $expense_categories = ExpenseCategory::getAll();
-        $view = Auth::user()->user_type . '.expense-categories.index';
-        return view($view)->with('expense_categories',$expense_categories);
+        return response()->json($expense_categories);
     }
     
 
@@ -31,11 +26,6 @@ class ExpenseCategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        $view = Auth::user()->user_type ;
-        return view($view.'.expense-categories.create');
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -52,11 +42,11 @@ class ExpenseCategoriesController extends Controller
         
         $expense_category = new ExpenseCategory;
         $expense_category->name = $request->description;
-        $expense_category->user_id = Auth::user()->id;
+        $expense_category->user_id = auth()->user()->user_account_id;
        
         $expense_category->save();
         
-        return redirect('expense-categories')->with('status', 'Category was added successfully');
+        return $expense_category;
     }
 
     /**
@@ -68,9 +58,7 @@ class ExpenseCategoriesController extends Controller
     public function show($id)
     {
         $expense_category = ExpenseCategory::findOrFail($id);
-        $view = Auth::user()->user_type ;
-        return view($view.'.expense-categories.show')->with('expense_category',$expense_category);
-    }
+        return response()->json($expense_category);    }
 
     /**
      * Show the form for editing the specified resource.
@@ -101,7 +89,7 @@ class ExpenseCategoriesController extends Controller
         $expense_category->name = $request->description;
         $expense_category->save();
         
-        return redirect('expense-categories')->with('status', 'Category was updated successfully');
+        return response()->json($expense_category, 200);
     }
 
     /**

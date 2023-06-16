@@ -32,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum'] ], function () {
         'expenses' => App\Http\Controllers\ExpensesController::class,
         'item-categories' => App\Http\Controllers\ItemCategoriesController::class,
     ]);
+	Auth::routes(['verify' => true]);
 });
 
 Route::get('/customers-search', [App\Http\Controllers\APIControllers\CustomersController::class, 'search']);
@@ -100,4 +101,3 @@ Route::group(['middleware' => ['verified', 'log.activity', 'subscribed'] ], func
 	Route::post('/sales-report/view', [App\Http\Controllers\SalesReportController::class, 'showReport'])->name('salesreportshow');
 	Route::get('/export-customers/', [App\Http\Controllers\CustomersController::class, 'export'])->name('export.customers');
 	});
-Auth::routes(['verify' => true]);

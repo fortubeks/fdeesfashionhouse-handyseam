@@ -131,11 +131,8 @@ class CustomersController extends Controller
         $customer->measurement_details = $encoded_M_details;
         
         $customer->save();
-        if($request->origin == 'order_creation'){
-            $view = auth()->user()->user_type . '.orders.create.tailoring.step3';
-            return view($view);
-        }
-        return redirect()->back()->with('status', 'Customer measurement was updated successfully');
+        
+        return $customer;
     }
 
     /**
