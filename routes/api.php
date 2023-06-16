@@ -30,4 +30,4 @@ Route::group(['middleware' => ['auth:sanctum'] ], function () {
         'item-categories' => App\Http\Controllers\ItemCategoriesController::class,
     ]);
 });
-Auth::routes(['verify' => true]);
+Route::post('/login', [App\Http\Controllers\APIControllers\Auth\LoginController::class, 'login']);
