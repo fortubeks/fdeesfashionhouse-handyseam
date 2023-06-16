@@ -58,11 +58,17 @@ class LoginController extends Controller
         
      
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-  
-            return redirect()->route('home');
+        if (auth()->attempt($credentials)) {
+            $token = $user->createToken('myapptoken')->plainTextToken;
+
+            $response = [
+                'user' => $user,
+                'token' => $token,
+            ];
+    
+            return response($response,201);
         }
     
-        return redirect("login")->withFail('Opps! You have entered wrong credentials');
+        return response()->json(null, 401);
     }
 }
