@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\ExpenseCategory;
+use Auth;
+
+class ExpenseCategoriesController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //get a list of all items in inventory
+        $expense_categories = ExpenseCategory::getAll();
+        $view = Auth::user()->user_type . '.expense-categories.index';
+        return view($view)->with('expense_categories',$expense_categories);
+    }
+    
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $view = Auth::user()->user_type ;
+        return view($view.'.expense-categories.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //validate customer entry, store and set view to list of customers
+        $validatedData = $request->validate([
+            'description' => ['required'],
+        ]);
+        
+        $expense_category = new ExpenseCategory;
+        $expense_category->name = $request->description;
+        $expense_category->user_id = Auth::user()->id;
+       
+        $expense_category->save();
+        
+        return redirect('expense-categories')->with('status', 'Category was added successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $expense_category = ExpenseCategory::findOrFail($id);
+        $view = Auth::user()->user_type ;
+        return view($view.'.expense-categories.show')->with('expense_category',$expense_category);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //validate customer entry, store and set view to list of customers
+        $validatedData = $request->validate([
+            'description' => ['required'],
+        ]);
+        
+        $expense_category = ExpenseCategory::find($id);
+        $expense_category->name = $request->description;
+        $expense_category->save();
+        
+        return redirect('expense-categories')->with('status', 'Category was updated successfully');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}
