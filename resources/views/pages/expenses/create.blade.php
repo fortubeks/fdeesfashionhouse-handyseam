@@ -27,15 +27,15 @@
                                 </div>
                                 <div class="form-group bmd-form-group mb-4">
                                     <label>Name/Description</label>
-                                    <input type="text" name="description" class="form-control" placeholder="Enter Item Description" aria-label="Enter Item Description">
+                                    <input type="text" name="description" required class="form-control" placeholder="Enter Item Description" aria-label="Enter Item Description">
                                 </div>
                                 <div class="form-group bmd-form-group mb-4">
                                     <label>Amount</label>
-                                    <input type="number" name="amount" step=".001" min="0" class="form-control" placeholder="Enter Amount" aria-label="Enter Cost Price">
+                                    <input type="number" name="amount" step=".001" required min="0" class="form-control" placeholder="Enter Amount" aria-label="Enter Cost Price">
                                 </div> 
                                 <div class="form-group bmd-form-group mb-4">
                                     <label>Date of Expense</label>
-                                    <input type="date" name="value_date" class="form-control" placeholder="" > 
+                                    <input type="date" name="value_date" required class="form-control" placeholder="" > 
                                 </div> 
                                 
                             </div>
