@@ -17,17 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:sanctum'] ], function () {
     Route::resources([
-        'items' => App\Http\Controllers\ItemsController::class,['except' => ['create','edit']],
-        'customers' => App\Http\Controllers\APIControllers\CustomersController::class,['except' => ['create','edit']],
-        'orders' => App\Http\Controllers\OrdersController::class,
-        'measurements' => App\Http\Controllers\MeasurementsController::class,
-        'invoices' => App\Http\Controllers\InvoicesController::class,
-        'payments' => App\Http\Controllers\PaymentsController::class,
-        'staffs' => App\Http\Controllers\StaffsController::class,
-        'settings' => App\Http\Controllers\SettingsController::class,
-        'expense-categories' => App\Http\Controllers\ExpenseCategoriesController::class,
-        'expenses' => App\Http\Controllers\ExpensesController::class,
-        'item-categories' => App\Http\Controllers\ItemCategoriesController::class,
-    ]);
+        'items' => App\Http\Controllers\APIControllers\ItemsController::class,
+        'customers' => App\Http\Controllers\APIControllers\CustomersController::class,
+        'orders' => App\Http\Controllers\APIControllers\OrdersController::class,
+        'payments' => App\Http\Controllers\APIControllers\PaymentsController::class,
+        'staffs' => App\Http\Controllers\APIControllers\StaffsController::class,
+        'expense-categories' => App\Http\Controllers\APIControllers\ExpenseCategoriesController::class,
+        'expenses' => App\Http\Controllers\APIControllers\ExpensesController::class,
+        'item-categories' => App\Http\Controllers\APIControllers\ItemCategoriesController::class,
+    ],['except' => ['create','edit']]);
+    Route::resource('settings', App\Http\Controllers\APIControllers\SettingsController::class)->only(['show', 'update']);
 });
 Route::post('/login', [App\Http\Controllers\APIControllers\Auth\LoginController::class, 'login']);
