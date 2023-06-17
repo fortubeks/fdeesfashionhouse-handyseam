@@ -1,17 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\APIControllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
-use Auth;
+use App\Models\ItemCategory;
 
 class ItemsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -21,39 +17,19 @@ class ItemsController extends Controller
     {
         //get a list of all items in inventory
         $items = Item::getAll();
-        $view = Auth::user()->user_type . '.items.index';
-        return view($view)->with('items',$items);
+        return response()->json($items, 200);
     }
-    public function filter($filter_by, $filter_value)
-    {
-        //get a list of all businesses belonging to the user
-        $shops = Shop::all();
-        return view('admin.shops.index')->with('shops',$shops);
-    }
+    
     public function search(Request $request)
     {
-        $view = Auth::user()->user_type;
         if($request->search_by == 'desc'){
             $items = Item::where('description','like', '%'."{$request->search_value}".'%')->
-            where('user_id','=', Auth::user()->id)->paginate(10);
-            if($request->origin == 'order_creation'){
-                return view($view.'.orders.create.sales.step2')->with('items', $items);
-            }
-            return view($view.'.items.index')->with('items', $items);
+            where('user_id','=', auth()->user()->user_account_id)->get();
+            
+            return response()->json($items, 201);
             
         }
         
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $view = Auth::user()->user_type ;
-        return view($view.'.items.create');
     }
 
     /**
@@ -68,21 +44,20 @@ class ItemsController extends Controller
         $validatedData = $request->validate([
             'category_id' => ['required'],
             'description' => ['required'],
-            'price' => ['required'],
             'qty' => ['required'],
         ]);
         
         $item = new Item;
         $item->description = $request->description;
-        $item->category = $request->category_id;
+        $item->item_category_id = $request->category_id;
         $item->inventory_quantity = $request->qty;
-        $item->price = $request->price;
-        $item->cost_price = $request->cost_price;
-        $item->user_id = Auth::user()->id;
+        $item->unit_measurement = $request->unit_measurement;
+        $item->for_sale = isset($request->for_sale) ? 1 : 0;
+        $item->user_id = auth()->user()->user_account_id;
 
         $item->save();
         
-        return redirect('items')->with('status', 'Item was added successfully');
+        return response()->json($item, 201);
     }
 
     /**
@@ -94,19 +69,7 @@ class ItemsController extends Controller
     public function show($id)
     {
         $item = Item::findOrFail($id);
-        $view = Auth::user()->user_type ;
-        return view($view.'.items.show')->with('item',$item);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json($item, 200);
     }
 
     /**
@@ -123,19 +86,21 @@ class ItemsController extends Controller
             'description' => ['required'],
             'price' => ['required'],
             'qty' => ['required'],
+            'cost_price' => ['required'],
             'category_id' => ['required'],
         ]);
         
         $item = Item::find($id);
         $item->description = $request->description;
-        $item->category = $request->category_id;
+        $item->item_category_id = $request->category_id;
         $item->inventory_quantity = $request->qty;
-        $item->cost_price = $request->cost_price;
+        //$item->cost_price = $request->cost_price;
         $item->price = $request->price;
+        $item->for_sale = isset($request->for_sale) ? 1 : 0;
 
         $item->save();
         
-        return redirect('items')->with('status', 'Item was updated successfully');
+        return response()->json($item, 200);
     }
 
     /**

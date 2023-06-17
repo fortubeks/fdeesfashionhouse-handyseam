@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:sanctum'] ], function () {
     Route::resources([
-        'items' => App\Http\Controllers\ItemsController::class,
-        'customers' => App\Http\Controllers\APIControllers\CustomersController::class,
+        'items' => App\Http\Controllers\ItemsController::class,['except' => ['create','edit']],
+        'customers' => App\Http\Controllers\APIControllers\CustomersController::class,['except' => ['create','edit']],
         'orders' => App\Http\Controllers\OrdersController::class,
         'measurements' => App\Http\Controllers\MeasurementsController::class,
         'invoices' => App\Http\Controllers\InvoicesController::class,

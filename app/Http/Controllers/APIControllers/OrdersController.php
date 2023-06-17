@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\APIControllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -8,7 +8,13 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\OrderItem;
+use App\Models\Outfit;
 use App\Models\Payment;
+use App\Models\OutfitsOrders;
+use Illuminate\Support\Facades\Storage as FacadesStorage;
+use App\Notifications\OrderProcessed;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Http;
 
 class OrdersController extends Controller
 {
@@ -20,26 +26,12 @@ class OrdersController extends Controller
     public function index()
     {
         $orders = Order::getAll();
+        $orders_sum = $orders->sum('total_amount');
+        $orders_count = $orders->count();
+
         $view = 'pages.orders.index';
-        return view($view)->with('orders',$orders);
+        return response()->json(compact('orders','orders_sum','orders_count'),200);
     }
-    
-    public function search(Request $request)
-    {
-        
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $view = 'pages.orders.create.step1';
-        return view($view);
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -53,23 +45,45 @@ class OrdersController extends Controller
             'customer_id' => ['required'],
             'total_amount' => ['required'],
         ]);
+
+        $vat = auth()->user()->user_account->app_settings->vat/100 * $request->total_amount;
         
         $order = new Order;
         $order->customer_id = $request->customer_id;
         $order->total_amount = $request->total_amount; 
+        $order->vat = $vat; 
         $order->order_type = $request->order_type;
-        $order->user_id = auth()->user()->id;
-        
+        $order->user_id = auth()->user()->user_account_id;
         $order->status = 'Pending Payment';
-
         if($request->order_type == 'tailoring'){
             $order->expected_delivery_date = $request->expected_delivery_date;
-            $order->order_style = session('order_style');
-            $order->order_style_images = session('order_style_images');
         }
-    
+
         $order->save();
-        $request->session()->forget(['customer_id', 'order_style']);
+
+        if($request->order_type == 'tailoring'){
+            //$order->instruction = session('order_style');
+           
+            foreach(session('outfit_orders') as $key => $outfit){
+                $outfit_order = new OutfitsOrders;
+                $outfit_order->order_id = $order->id;
+                $outfit_order->user_id = auth()->user()->user_account_id;
+
+                $titles = explode('<?>',$outfit);
+                $outfit_order->name = $titles[0];
+                $outfit_order->price = $titles[1];
+                $outfit_order->instruction = $titles[2];
+                $outfit_order->qty = $titles[3];
+                $outfit_order->image = $titles[4];
+                if($outfit_order->image == ''){
+                    $outfit_order->image = 'default.jpg';
+                }
+
+                $outfit_order->save();
+            }
+        }
+
+        $request->session()->forget(['customer_id', 'outfit_orders']);
 
         //create invoice as well
         $invoice = new Invoice;
@@ -80,14 +94,16 @@ class OrdersController extends Controller
         //send sms
         if($request->order_type == 'tailoring'){
             $customer = Customer::findOrFail($request->customer_id);
-            $api_key = 'a13babcd7b8dea714c3454f865f97d36ab76fbde';
-            $username = 'fortubeks2010@hotmail.com';
-            $sender = 'Fdees';
-            $msg = 'Thank you for your order. Your expected fitting date is '. $order->expected_delivery_date .'Thank you for choosing Fdees Fashion House';
-            $request_url = 'http://api.ebulksms.com:8080/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
+            $api_key = auth()->user()->user_account->app_settings->sms_api_key;
+            $username = auth()->user()->user_account->app_settings->sms_api_username;
+            $sender = auth()->user()->user_account->app_settings->sms_sender;
+			$business_name = auth()->user()->user_account->app_settings->business_name;
+            $msg = 'Thank you for your order. Your expected fitting date is '. $order->expected_delivery_date .'. Thank you for choosing '.$business_name;
+            $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring"){
-                //$sms_response = Http::get($request_url);
+                $sms_response = Http::get($request_url);
+                //$customer->notify(new OrderProcessed($order));
             }
         }
 
@@ -114,13 +130,11 @@ class OrdersController extends Controller
             session()->pull('cart_items');
             session()->pull('customer_id');
             session()->pull('cart_total_amount');
-            
 
-            return $order;
         }
         
         
-        return $order;
+        return response()->json($order,201);
     }
 
     /**
@@ -131,19 +145,8 @@ class OrdersController extends Controller
      */
     public function show($id)
     {
-        $order = Order::find($id);
-        return $order;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $order = Order::findOrFail($id);
+        return response()->json($order,200);
     }
 
     /**
@@ -159,38 +162,93 @@ class OrdersController extends Controller
         
         $order->status = $request->status;
         $order->total_amount = $request->total_amount; 
+        $total_amount = 0;
         if($request->order_type == 'tailoring'){
             $order->expected_delivery_date = $request->expected_delivery_date;
-            $order->order_style = $request->order_style;
-
-            $style_images = '';
-            if($request->hasFile('styles'))
-            {
-                $allowedfileExtension=['pdf','jpg','png','jpeg'];
-
-                foreach($request->file('styles') as $key=>$file)
-                {
-                    $filename = $file->getClientOriginalName();
-                    $extension = $file->getClientOriginalExtension();
-                    $check=in_array($extension,$allowedfileExtension);
+            $order->instructions = $request->instructions;
+           
+            
+			if($request->outfit){
+				foreach($request->outfit as $key => $outfit){
                     
-                    if($check)
-                    {              
-                            $newfilename = $file->store('styles');
-                            //
-                            $style_images .= $request->style_names[$key].'='.$newfilename.',';    
+                    $outfit_order = OutfitsOrders::find($outfit);
+                    if($outfit_order){
+                        $outfit_order->staff_id = $request->staff_id[$key];
+                        $outfit_order->tailor_cost = $request->tailor_cost[$key];
+                        $outfit_order->material_cost = $request->material_cost[$key];
+                        $outfit_order->customer_id = $request->customer_id[$key];
                     }
-                
+                    else{
+                        $outfit_order = new OutfitsOrders;
+                        $outfit_order->user_id = auth()->user()->user_account_id;
+                        $outfit_order->order_id = $order->id;
+                    }
+
+                    $instruction = $request->instruction[$key];
+                    $qty = $request->qty[$key];
+                    if($instruction == ''){
+                        $instruction = '-';
+                    }
+                    if($qty == ''){
+                        $qty = 1;
+                    }
+                    
+                    $outfit_order->name = $request->name[$key];
+                    $outfit_order->price = $request->price[$key];
+                    $outfit_order->qty = $qty;
+                    $outfit_order->instruction = $instruction;
+
+                    if($request->file('styles')){
+                        $allowedfileExtension=['pdf','jpg','png','jpeg'];
+                        foreach ($request->file('styles') as $key_ => $file){
+                            if($key == $key_){
+                                $filename = $file->getClientOriginalName();
+                                $extension = $file->getClientOriginalExtension();
+                                $check=in_array($extension,$allowedfileExtension);
+                                
+                                if($check)
+                                {              
+                                    $newfilename = time().rand(111, 9999).".". $extension;
+                                    FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
+                                    $outfit_order->image = $newfilename;
+                                }
+                            }
+                        }
+                        
+                    }
+                    $amount = $outfit_order->qty * $outfit_order->price;
+                    $total_amount += $amount;
+                    $outfit_order->save();
                 }
-                $style_images = substr($style_images, 0, -1);
-                
-            }
-            $order->order_style_images .= ','. $style_images;
+			}
+            $order->total_amount = $total_amount;
         }
-    
+        
         $order->save();
         
-        return redirect('orders')->with('status', 'Order was updated successfully');
+        return response()->json($order,200);
+    }
+
+    public function filter(Request $request){        
+        $from = $request->from_filter;
+        $to = $request->to_filter;
+        $search_by = $request->search_by;
+  
+        $order_query = auth()->user()->user_account->orders()->when($request->query('search_by'), fn(Builder $query, $status) => $query->where('status', $status))
+        ->where('expected_delivery_date','>=',$from)->where('expected_delivery_date','<=',$to);
+
+        $orders_sum = $order_query->sum('total_amount');
+        $orders_count = $order_query->count();
+
+        $orders = $order_query->paginate(15)->appends([
+                'from' => request('from'),
+                'search_by' => request('search_by'),
+                'to' => request('to'),
+                'orders_sum' => $orders_sum,
+                'orders_count' => $orders_count,
+                ]);
+
+        return response()->json(compact('orders','from','to','search_by','orders_sum','orders_count'),200);
     }
 
     /**
@@ -206,45 +264,68 @@ class OrdersController extends Controller
         //get the invoice for that order
         $invoice = Invoice::where('order_id',$order->id)->first();
         //get all the payments for that invoice
-        Payment::where('invoice_id',$invoice->id)->delete();
-        //delete all the payments
-        //delete the invoice
-        $invoice->delete();
-        //delete the order
+        if($invoice){
+            Payment::where('invoice_id',$invoice->id)->delete();
+            //delete all the payments
+            //delete the invoice
+            $invoice->delete();
+            //delete the order
+        }
+        
         
         $order->delete();
-        return redirect('orders')->with('status', 'Order was deleted successfully');
+        return response()->json(null, 204);
     }
 
     public function addStyleToOrder(Request $request){
-        $style_images = '';
-        if($request->hasFile('styles'))
+        $total_amount_less_vat = 0;
+        if (!session()->has('outfit_orders')){
+            session()->put('outfit_orders', []);
+        }
+        if($request->style_names)
         {
             $allowedfileExtension=['pdf','jpg','png','jpeg'];
-
-            foreach($request->file('styles') as $key=>$file)
-            {
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $check=in_array($extension,$allowedfileExtension);
-                
-                if($check)
-                {              
-                        $newfilename = $file->store('styles');
-                        //
-                        $style_images .= $request->style_names[$key].'='.$newfilename.',';    
+            foreach ($request->style_names as $key_=>$style){
+                $instruction = $request->instruction[$key_];
+                $qty = $request->qty[$key_];
+                if($instruction == ''){
+                    $instruction = '-';
                 }
-            
-            }
-            $style_images = substr($style_images, 0, -1);
-            
+                if($qty == ''){
+                    $qty = 1;
+                }
+                $style_and_image_string = $style.'<?>'.$request->price[$key_].'<?>'.$instruction.'<?>'.$qty.'<?>';
+                $amount = $request->price[$key_] * $qty;
+                $total_amount_less_vat += $amount;
+                if($request->file('styles')){
+                    foreach ($request->file('styles') as $key => $file){
+                        if($key == $key_){
+                            $filename = $file->getClientOriginalName();
+                            $extension = $file->getClientOriginalExtension();
+                            $check=in_array($extension,$allowedfileExtension);
+                            
+                            if($check)
+                            {              
+                                $newfilename = time().rand(111, 9999).".". $extension;
+                                FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
+                                $style_and_image_string .= $newfilename;
+                                $file_uploaded = 1;
+                            }
+                        }
+                    }
+                    
+                }
+                else{
+                    $style_and_image_string .= 'default.jpg';
+                }
+                session()->push('outfit_orders', $style_and_image_string);
+            }               
         }
-        session(['order_style' => $request->style]);
-        session(['order_style_images' => $style_images]);
-        $customer = Customer::find(session('customer_id'));
         
-        $view = auth()->user()->user_type . '.orders.create.tailoring.step4';
-        return view($view)->with('customer',$customer);
+        $customer = Customer::find(session('customer_id'));
+        $total_amount = $total_amount_less_vat;
+        
+        return response()->json('Success', 201);
     }
 
     public function addItemToCart($item_id)
@@ -260,7 +341,7 @@ class OrdersController extends Controller
         $total_amount += $item->price;
         session(['cart_total_amount' => $total_amount]);
 
-        return session('cart_items');
+        return response()->json(session('cart_items'), 201);
     }
     public function removeItemFromCart($item_id)
     {   
@@ -280,12 +361,7 @@ class OrdersController extends Controller
             session(['cart_items' => $items]);
             session(['cart_total_amount' => $total_amount]);
         }
-        return session('cart_items');
+        return response()->json(session('cart_items'), 201);
     }
 
-    public function getOrdersDueThisWeek()
-    {
-        $orders = Order::orderBy('expected_delivery_date','asc')->get();
-        return $orders;
-    }
 }

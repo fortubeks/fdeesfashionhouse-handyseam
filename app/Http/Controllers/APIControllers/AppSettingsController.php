@@ -1,54 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\APIControllers;
 
 use Illuminate\Http\Request;
-use App\Models\AppSetting;
-use Auth;
+use App\Models\Setting;
+use App\Models\Customer;
+use Storage;
 
-class AppSettingsController extends Controller
+class SettingsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $appSetting = AppSetting::where('user_id', Auth::user()->id)->first();
-        return view('admin.settings.show')->with('setting',$appSetting);
-    }
 
-    public function showUpdateMeasurementSettingsForm()
-    {
-        //$appSetting = AppSetting::where('user_id', Auth::user()->id)->first();
-        return view('admin.settings.measurements.show');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        
-    }
     function createUrlSlug($urlString){
         $slug=preg_replace('/[^A-Za-z0-9-]+/', '-', $urlString);
         return $slug;
@@ -78,16 +39,14 @@ class AppSettingsController extends Controller
             
         }
         $encoded_M_details = json_encode($m_details);
-        if (AppSetting::where('user_id', Auth::user()->id)->exists()) {
-            $appSetting = AppSetting::where('user_id', Auth::user()->id)->first();
-            return view('admin.settings.setup.business-info')->with('setting',$appSetting);
-        }
-        $appSetting = new AppSetting;
+
+        $appSetting = Setting::where('user_id', auth()->user()->id)->first();
         
         $appSetting->measurement_details = $encoded_M_details;
-        $appSetting->user_id = Auth::user()->id;
+        $appSetting->measurement_set = 1;
         $appSetting->save();
-        return view('admin.settings.setup.business-info')->with('setting',$appSetting);
+        
+        return response()->json($appSetting, 201);
     }
 
     public function updateMeasurement(Request $request)
@@ -107,12 +66,14 @@ class AppSettingsController extends Controller
         }
         $encoded_M_details = json_encode($m_details);
         
-        $appSetting = AppSetting::where('user_id', Auth::user()->id)->first();
+        $appSetting = Setting::where('user_id', auth()->user()->id)->first();
         
         $appSetting->measurement_details = $encoded_M_details;
         //$appSetting->user_id = Auth::user()->id;
+        $appSetting->measurement_set = 1;
         $appSetting->save();
-        return redirect('/settings')->with('status','Measurement Details Updated');
+
+        return response()->json($appSetting, 200);
     }
     /**
      * Display the specified resource.
@@ -122,20 +83,10 @@ class AppSettingsController extends Controller
      */
     public function show($id)
     {
-        $setting = AppSetting::find($id);
-        return view('admin.settings.show')->with('setting',$setting);
+        $setting = Setting::find($id);
+        return response()->json($setting, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -145,17 +96,26 @@ class AppSettingsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {   
-        $setting = AppSetting::find($id);
-        
+    {    
+        $validatedData = $request->validate([
+        'business_name' => ['required'],
+        ]);
+        $setting = Setting::find($id);
+        $this->authorize(auth()->user(),  $setting);
         $setting->business_name = $request->business_name;
         $setting->business_address = $request->business_address;
         $setting->business_phone = $request->business_phone;
         $setting->business_payment_advice = $request->business_payment_advice;
-        $setting->sms_api_key = $request->sms_api_key;
-        $setting->sms_api_username = $request->sms_api_username;
-        $setting->sms_sender = $request->sms_sender;
-
+        $setting->business_currency = $request->business_currency;
+        $setting->business_focus = $request->business_focus;
+        $setting->vat = $request->business_vat;
+        if($setting->vat == null){
+            $setting->vat = 0;
+        }
+        $setting->sms_sender = substr($request->business_name, 0, 11);
+        if($request->origin == 'setup' || $setting->measurement_details == ''){
+            
+        }
         if($request->hasFile('business_logo'))
             {
                 $allowedfileExtension=['jpeg','jpg','png'];
@@ -164,35 +124,16 @@ class AppSettingsController extends Controller
                 $extension = $request->business_logo->getClientOriginalExtension();
                 $check = in_array($extension,$allowedfileExtension);
                 if($check){
-                    $path = $request->file('business_logo')->store('public/images/logo_images');
+                    $newfilename = time().rand(111, 9999).".". $extension;
+                    Storage::disk('logo_images')->put($newfilename, file_get_contents($request->file('business_logo')));
                     
-                    $setting->business_logo = $path;
+                    $setting->business_logo = $newfilename;
                 }
                 
             }
 
         $setting->save();
-        if($request->origin == 'setup'){
-            return redirect('/home')->with('status','Setings updated. Welcome to the Tailor App');
-        }
-
-        return redirect('/settings')->with('status','Settings Updated');
+        return response()->json($setting, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-    public function loadSettingsInSession(){
-        $setting = Setting::find(1);
-        
-        $setting->email_for_notifications = $request->email;
-
-    }
 }

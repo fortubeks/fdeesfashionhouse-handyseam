@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\APIControllers;
 
 use Illuminate\Http\Request;
 use App\Models\ExpenseCategory;
-use Auth;
 
 class ExpenseCategoriesController extends Controller
 {
-
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,16 +18,10 @@ class ExpenseCategoriesController extends Controller
      */
     public function index()
     {
-        $expense_categories = ExpenseCategory::getAll();
-        return response()->json($expense_categories);
+        //get a list of all items in inventory
+        $expense_categories = auth()->user()->user_account->expense_categories;
+        return response()->json($expense_categories, 200);
     }
-    
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     /**
      * Store a newly created resource in storage.
@@ -46,7 +42,7 @@ class ExpenseCategoriesController extends Controller
        
         $expense_category->save();
         
-        return $expense_category;
+        return response()->json($expense_category, 201);
     }
 
     /**
@@ -58,18 +54,9 @@ class ExpenseCategoriesController extends Controller
     public function show($id)
     {
         $expense_category = ExpenseCategory::findOrFail($id);
-        return response()->json($expense_category);    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json($expense_category, 200);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -100,6 +87,9 @@ class ExpenseCategoriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $expense_category = ExpenseCategory::find($id);
+        $expense_category->delete();
+        
+        return response()->json(null, 200);
     }
 }

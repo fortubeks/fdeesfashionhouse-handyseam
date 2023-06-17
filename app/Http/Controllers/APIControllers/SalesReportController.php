@@ -1,27 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\APIControllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
-use Auth;
 
 class SalesReportController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $view = Auth::user()->user_type . '.sales-report.index';
-        return view($view)->with('orders',[]);
-    }
 
     public function showReport(Request $request){
         $validatedData = $request->validate([
@@ -36,7 +21,6 @@ class SalesReportController extends Controller
                 'start_date' => request('start_date'),
                 'end_date' => request('end_date'),
                 ]);
-        $view = Auth::user()->user_type . '.sales-report.index';
-        return view($view)->with('orders', $orders);
+        return response()->json($orders,200);
     }
 }

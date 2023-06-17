@@ -56,7 +56,7 @@ class PaymentsController extends Controller
         ]);
         
         $payment = new Payment;
-        $payment->user_id = auth()->user()->id;
+        $payment->user_id = auth()->user()->user_account_id;
         $payment->invoice_id = $request->invoice_id;
         $payment->amount = $request->amount;
         $payment->mode_of_payment = $request->mode_of_payment;
