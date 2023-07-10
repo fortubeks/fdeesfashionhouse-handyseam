@@ -54,9 +54,13 @@
                         <div class="form-group">
                             <label for="" class="">Status</label>
                             <select class="form-select" data-status="{{ __($order->status ?? 'None') }}" name="status" id="status">
-                                <option value="Pending Payment">Pending Payment</option>
+                                <option value="Pending Payment">Pending Payment</option>     
                                 <option value="Processing">Processing</option>
-                                <option value="Completed">Completed</option>
+                                <option value="Cutting">Cutting</option>
+                                <option value="Sewing">Sewing</option>
+                                <option value="Ready For Trial">Ready For Trial</option>
+                                <option value="Ready">Ready</option>
+                                <option value="Delivered">Delivered</option>
                             </select> 
                         </div>
                         
