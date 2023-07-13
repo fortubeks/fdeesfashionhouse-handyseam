@@ -12,8 +12,9 @@ class CustomersExport implements FromCollection
     */
     public function collection()
     {
-        return Customer::all([
+        return auth()->user()->user_account->customers([
             'name',
+            'user_id',
             'phone',
             'address',
             'email',
