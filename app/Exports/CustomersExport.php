@@ -12,9 +12,8 @@ class CustomersExport implements FromCollection
     */
     public function collection()
     {
-        return auth()->user()->user_account->customers([
+        return Customer::where('user_id',auth()->user()->user_account_id)->get([
             'name',
-            'user_id',
             'phone',
             'address',
             'email',
