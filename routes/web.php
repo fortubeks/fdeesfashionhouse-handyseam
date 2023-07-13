@@ -91,6 +91,8 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::get('/payments-search/', [App\Http\Controllers\PaymentsController::class, 'search']);
 
 	Route::get('/measurement/print/{measurement_id}', [App\Http\Controllers\MeasurementsController::class, 'printMeasurement']);
+	Route::get('/printMeasurementInst/{outfit_id}', [App\Http\Controllers\PrintController::class, 'printMeasurementAndInstruction']);
+
 	Route::get('/changePassword', [App\Http\Controllers\HomeController::class, 'showChangePasswordForm']);
 	Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'ChangePassword'])->name('changePassword');
 	Route::post('/setup/measurements', [App\Http\Controllers\SettingsController::class, 'saveMeasurement']);
@@ -99,6 +101,7 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::post('/update-measurement-settings', [App\Http\Controllers\SettingsController::class, 'updateMeasurement']);
 	Route::get('/admin-staffs-search/', [App\Http\Controllers\StaffsController::class, 'search']);
 	Route::get('/weekly-outfit-payments/', [App\Http\Controllers\ExpensesController::class, 'weeklyOutfitPaymentsIndex']);
+	Route::get('/tailor-payment-date-update/', [App\Http\Controllers\ExpensesController::class, 'updateTailorPaymentDate']);
 	Route::get('/outfit-payments-search/', [App\Http\Controllers\ExpensesController::class, 'getWeeklyOutfitsPayments']);
 	Route::post('/delete-customer/{customer_id}', [App\Http\Controllers\CustomersController::class, 'softDeleteCustomer']);
 	Route::get('/resend-verification-email', [App\Http\Controllers\CustomersController::class, 'resendVerificationEmail']);

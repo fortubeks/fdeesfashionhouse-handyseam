@@ -10,7 +10,6 @@
         
       <div class="col-md-8 mb-3">
         <form action="{{ url('/outfit-payments-search') }}" method="get">
-          @csrf
           <div class="row">
             <div class="col-md-6">
                 <input class="form-control" name="week_ending" type="week" >
@@ -27,17 +26,19 @@
       <div class="col-md-12">
         <div class="card card-plain">
           <div class="card-header card-header-primary">
-            <h4 class="card-title mt-0"> Outfit Tailor Payments</h4>
-            <p class="card-category"> View All Payments</p>
+            <h4 class="card-title mt-0"> Tailor Payments</h4>
+            <p class="card-category"> Manage payments to tailors by outfits made</p>
           </div>
           <div class="card-body">
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead class="">
                     <th>Tailor Name</th>
-                    <th>Completed Outfits</th>
-                    <th>Amount Due</th>
-                    <th>Payment Status</th>
+                    <th>Customer</th>
+                    <th>Style</th>
+                    <th>Fitting Date</th>
+                    <th>Status</th>
+                    <th>Amount</th>
                     <th>Date of Payment</th>
                 </thead>
                 <tbody>
@@ -50,23 +51,31 @@
                   {{ __( $payment->tailor ?? 'None') }}
                   </td>
                   <td>
-                      {{ __($payment->completed_outfits) }}
+                      {{ __($payment->customer) }}
                   </td>
                   <td>
-                  {{ __($payment->total_amount_due) }}
+                  {{ __($payment->style) }}
+                  </td>
+                  <td>
+                  {{ __($payment->fitting_date) }}
                   </td>
                   <td>
                   {{ __($payment->status) }}
                   </td>
                   <td>
-                  {{ __($payment->date_of_payment) }}
+                  {{ __($payment->amount) }}
+                  </td>
+                  <td>
+                    <input type="date" value="{{(($payment->payment_date)) ? $payment->payment_date : ''}}" class="form-control paymentDate" data-id="{{$payment->outfit_id}}">
+                  
                   </td>
                   </tr>
                   @endforeach
                 </tbody>
               </table>
-                                     
-                    
+              @if($tailor_payments_by_outfits_made_weekly instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                <div class="justify-content-center">{{$tailor_payments_by_outfits_made_weekly->appends(request()->query())->links()}}</div>
+                @endif
             </div>
           </div>
         </div>
@@ -80,5 +89,16 @@ window.addEventListener('load', function() {
     $('.item').click(function() {
    
 })
+$('.paymentDate').change(function() {
+   params = "id="+ $(this).attr('data-id') + "&value="+$(this).val();
+   $.ajax({
+            url: "{{ url('/tailor-payment-date-update') }}",
+            type: "GET",
+            data: params,
+            success: function(data){
+                data = JSON.parse(data);
+            }
+        });
+  })
 });
 </script>

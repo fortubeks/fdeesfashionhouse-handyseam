@@ -76,7 +76,7 @@
                                 {{ __($item_used->outfit->order->customer->name) }}
                                 </td>
                                 <td>
-                                {{ __($item_used->qty) }}
+                                {{ __('-'.$item_used->qty) }}
                                 </td>
                                 <td>
                                 </tr>

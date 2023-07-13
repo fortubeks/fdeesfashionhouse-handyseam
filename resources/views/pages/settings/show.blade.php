@@ -242,6 +242,14 @@
                   </div>
                 </div>
                 <div class="row">
+                  <label class="col-sm-2 col-form-label">{{ __('Payment QR Image') }}</label>
+                  <div class="col-sm-7">
+                  <?php $payment_url =  asset('/storage/logo_images/'.$setting->payment_qr); ?>
+                      <img class="img-thumbnail" width="100px" style="margin-right: 20px;" src="{{ $payment_url }}"/>
+                  <input type="file" name="payment_qr" class="form-control" >
+                  </div>
+                </div>
+                <div class="row">
                   <label class="col-sm-2 col-form-label">{{ __('VAT *leave at 0 if you do not charge VAT') }}</label>
                   <div class="col-sm-7">
                   <input type="number" name="business_vat" class="form-control" value="{{ __($setting->vat ?? '0') }}" >

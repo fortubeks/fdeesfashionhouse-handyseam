@@ -49,6 +49,7 @@
                 <thead class="">
                     <th>SKU</th>
                     <th>Item Name</th>
+                    <th>For Sale</th>
                     <th>Qty in Stock</th>
                     <th>Unit Price</th>
                     <th></th>
@@ -65,6 +66,10 @@
                   <td>
                   {{ __($item->description) }}
                   </td>
+                  <td>
+                  {{ (($item->for_sale == 1)) ? 'Yes' : 'No' }}
+                  </td>
+                  
                   <td>
                   {{ __($item->inventory_quantity) }}
                   </td>

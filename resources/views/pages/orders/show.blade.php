@@ -198,7 +198,7 @@
                         
                         <div class="row">
                             <div class="col-md-4">
-                                <label class="form-control"> <?php if($outfit->tailor){echo $outfit->tailor->getFullName();} else{echo 'Tailor:';} ?> </label>
+                                <label class="form-control"> Tailor: </label>
                             </div>
                             <div class="col-md-8">
                                 <select name="staff_id[]" class="form-select mb-3 tailor" data-tailor="{{ __($outfit->staff_id ?? '') }}">
@@ -212,6 +212,7 @@
                                 </select>
                             </div>
                         </div>
+                        
 
                         <div class="row">
                             <div class="col-md-4">
@@ -255,6 +256,11 @@
                             </div>
                             <div class="col-md-4">
                                 <input type="number" step=".001" min="0" value="{{ __($outfit->material_cost ?? '') }}" placeholder="" name="material_cost[]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                            <button type="button" data-outfit-id="{{__($outfit->id ?? '') }}" id="btn_print_outfit_inst" class="btn btn-sm btn-primary btn_print_m_ins">Print Measurement & Instruction</button>
                             </div>
                         </div>
                         
@@ -394,7 +400,7 @@
                 </div>
                 <div class="modal-footer justify-content-center">
                     <input type="hidden" name="outfit_order_id" id="outfit_order_id">
-                    <button type="submit" class="btn btn-primary btn-link btn-wd btn-lg">Create</button>
+                    <button type="submit" class="btn btn-primary btn-link btn-wd btn-lg">Add</button>
                 </div>
                 </form>
             </div>
@@ -439,6 +445,15 @@ $("#btn_print_invoice").on("click", function(){
     
 });
 
+$(".btn_print_m_ins").on("click", function(){
+                                
+    var id = $(this).attr("data-outfit-id");
+    var url = "{{ url('/printMeasurementInst') }}/"+id;
+
+    window.open(url , '_blank');                           
+    
+});
+
 $("#btn_print_pdf_receipt").on("click", function(){
                                 
     var id = $(this).attr("data-invoice-id");
@@ -474,7 +489,7 @@ function updateTotal(){
 function setCost(item){
     var unit_cost = $(item).find(':selected').data('cost');
     $('#unit_cost').val(unit_cost);
-    
+    updateTotal();
 }
 function setOutfitId(outfit){
     var outfit_order_id = $(outfit).data('outfit');

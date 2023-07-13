@@ -195,6 +195,21 @@ class SettingsController extends Controller
                 }
                 
             }
+        if($request->hasFile('payment_qr'))
+        {
+            $allowedfileExtension=['jpeg','jpg','png'];
+        
+            $name = $request->file('payment_qr')->getClientOriginalName();
+            $extension = $request->payment_qr->getClientOriginalExtension();
+            $check = in_array($extension,$allowedfileExtension);
+            if($check){
+                $newfilename = time().rand(111, 9999).".". $extension;
+                Storage::disk('logo_images')->put($newfilename, file_get_contents($request->file('payment_qr')));
+                
+                $setting->payment_qr = $newfilename;
+            }
+            
+        }
 
         $setting->save();
         if($request->origin == 'setup'){

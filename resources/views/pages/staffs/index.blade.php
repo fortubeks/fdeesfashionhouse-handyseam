@@ -37,6 +37,7 @@
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Phone</th>
+                    <th>Role</th>
                 </thead>
                 <tbody>
                   @if(count($staffs)<=0)
@@ -52,6 +53,9 @@
                   </td>
                   <td>
                   {{ __($staff->phone) }}
+                  </td>
+                  <td>
+                  {{ __($staff->role) }}
                   </td>
                   </tr>
                   @endforeach

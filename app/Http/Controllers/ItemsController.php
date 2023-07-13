@@ -114,12 +114,15 @@ class ItemsController extends Controller
         //validate customer entry, store and set view to list of customers
         $validatedData = $request->validate([
             'description' => ['required'],
-            'price' => ['required'],
             'qty' => ['required'],
-            'cost_price' => ['required'],
             'category_id' => ['required'],
         ]);
-        
+        if(isset($request->for_sale)){
+            $validatedData = $request->validate([
+                'price' => ['required'],
+                'cost_price' => ['required'],
+            ]);
+        }
         $item = Item::find($id);
         $item->description = $request->description;
         $item->item_category_id = $request->category_id;

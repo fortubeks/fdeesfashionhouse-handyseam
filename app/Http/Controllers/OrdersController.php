@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Item;
+use App\Models\ItemsUsed;
 use App\Models\OrderItem;
 use App\Models\Outfit;
 use App\Models\Payment;
@@ -120,7 +121,7 @@ class OrdersController extends Controller
             $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring"){
-                $sms_response = Http::get($request_url);
+                //$sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
             }
         }
@@ -396,6 +397,21 @@ class OrdersController extends Controller
             session(['cart_total_amount' => $total_amount]);
         }
         return session('cart_items');
+    }
+
+    public function addItemsUsed(Request $request){
+        $item_used = ItemsUsed::create([
+            'outfits_orders_id' => $request->outfit_order_id,
+            'item_id' => $request->item_id,
+            'qty' => $request->qty,
+            'unit_cost' => $request->unit_cost,
+            'amount' => $request->amount,
+        ]);
+        //reduce in inventory
+        $item = Item::find($item_used->item_id);
+        $item->inventory_quantity -= $item_used->qty;
+        $item->save();
+        return redirect('orders/'.$item_used->outfit->order->id)->with('status', 'Added Successfully');
     }
 
 }

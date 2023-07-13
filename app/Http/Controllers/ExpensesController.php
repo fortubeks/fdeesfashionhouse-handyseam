@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
-use App\Models\Order;
-use Auth;
+use App\Models\OutfitsOrders;
 use Illuminate\Database\Eloquent\Builder;
 
 class ExpensesController extends Controller
@@ -118,7 +117,31 @@ class ExpensesController extends Controller
     public function weeklyOutfitPaymentsIndex()
     {
         $tailor_payments_by_outfits_made_weekly = [];
-        return view('pages.expenses.outfit-payments')->with('tailor_payments_by_outfits_made_weekly', $tailor_payments_by_outfits_made_weekly);
+        foreach(auth()->user()->user_account->orders()->orderBy('created_at','desc')->get() as $order){
+            foreach($order->outfits as $outfit){
+                if($outfit->tailor){
+                    $record = (object)[];
+                    $record->outfit_id = $outfit->id;
+                    $record->tailor = $outfit->tailor->getFullName();
+                    $record->customer = $outfit->order->customer->name;
+                    $record->style = $outfit->name;
+                    $record->fitting_date = $outfit->order->expected_delivery_date;
+                    $record->status = $outfit->order->status;
+                    $record->amount = $outfit->tailor_cost;
+                    $record->payment_date = $outfit->payment_date;
+                    array_push($tailor_payments_by_outfits_made_weekly, $record);
+                }
+            }
+        }
+        $data = paginate($tailor_payments_by_outfits_made_weekly,10);
+        return view('pages.expenses.outfit-payments')->with('tailor_payments_by_outfits_made_weekly', $data);
+    }
+
+    public function updateTailorPaymentDate(Request $request){
+        $outfit = OutfitsOrders::find($request->id);
+        $outfit->payment_date = $request->value;
+        $outfit->save();
+        return $outfit;
     }
 
     public function getWeeklyOutfitsPayments(Request $request)
@@ -130,16 +153,25 @@ class ExpensesController extends Controller
         $begining_date = date("Y-m-d", strtotime('-7days', strtotime($request->week_ending)));
         $end_date = date("Y-m-d", strtotime('-1days', strtotime($request->week_ending)));
         //return all the orders completed under that time frame
-
-        $orders = Order::where('expected_delivery_date','>=', "{$begining_date}")
-        ->where('expected_delivery_date', '<=', "{$end_date}")->get();
+        //dd($begining_date.'--'.$end_date);
+        $orders = auth()->user()->user_account->orders()->whereBetween('expected_delivery_date',[$begining_date,$end_date])
+        ->orderBy('created_at','desc')->get();
         
         $tailor_payments_by_outfits_made_weekly = [];
         foreach($orders as $order){
             foreach($order->outfits as $outfit){
-                $record = (object)[];
-                $record->tailor = $outfit->staff->getFullName();
-                array_push($tailor_payments_by_outfits_made_weekly, $record);
+                if($outfit->tailor){
+                    $record = (object)[];
+                    $record->outfit_id = $outfit->id;
+                    $record->tailor = $outfit->tailor->getFullName();
+                    $record->customer = $outfit->order->customer->name;
+                    $record->style = $outfit->name;
+                    $record->fitting_date = $outfit->order->expected_delivery_date;
+                    $record->status = $outfit->order->status;
+                    $record->amount = $outfit->tailor_cost;
+                    $record->payment_date = $outfit->payment_date;
+                    array_push($tailor_payments_by_outfits_made_weekly, $record);
+                }
             }
         }
        

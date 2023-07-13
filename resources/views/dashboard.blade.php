@@ -40,7 +40,7 @@
               <div class="card-icon">
                 <i class="material-icons">store</i>
               </div>
-              <p class="card-category">Revenu</p>
+              <p class="card-category">Revenue</p>
               <h3 class="card-title">{{formatCurrency(auth()->user()->orders->sum('total_amount'))}}</h3>
             </div>
             <div class="card-footer">

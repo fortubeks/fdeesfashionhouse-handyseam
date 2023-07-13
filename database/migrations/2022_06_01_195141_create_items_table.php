@@ -18,8 +18,8 @@ class CreateItemsTable extends Migration
             $table->foreignId('user_id');
             $table->string('description');
             $table->foreignId('item_category_id');
-            $table->double('cost_price');
-            $table->double('price');
+            $table->double('cost_price')->nullable();
+            $table->double('price')->nullable();
             $table->integer('inventory_quantity');
             $table->timestamps();
         });
