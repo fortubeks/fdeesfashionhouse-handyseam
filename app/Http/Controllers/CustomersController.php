@@ -131,9 +131,9 @@ class CustomersController extends Controller
         $validatedData = $request->validate([
             'name' => ['required'],
         ]);
-        if(Customer::where('user_id',auth()->user()->user_account->id)->where('phone',$request->phone)->exists()){
-            return redirect('customers/')->with('error', 'Phone number already taken');
-        }
+        // if(Customer::where('user_id',auth()->user()->user_account->id)->where('phone',$request->phone)->exists()){
+        //     return redirect('customers/')->with('error', 'Phone number already taken');
+        // }
         
         $customer = new Customer;
         $customer->user_id = auth()->user()->user_account_id;
