@@ -114,7 +114,22 @@
                                   <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="material-icons">face</i></div>
                                   </div>
-                                  <input type="text" name="name" class="form-control" placeholder="Customer Name...">
+                                  <input type="text" name="name" required class="form-control" placeholder="Customer Name...">
+                                </div>
+                            </div>
+
+                            <div class="form-group bmd-form-group">
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="material-icons">face</i></div>
+                                  </div>
+                                  <input type="hidden" id="parent_id" name="parent_id">
+                                  <input oninput="setParentID()" class="form-control" list="customerdatalistOptions" id="customer" placeholder="Parent Customer if anny">
+                                  <datalist id="customerdatalistOptions">
+                                      @foreach(getModelList('customers') as $customer)
+                                      <option value="{{$customer->name}}" data-value="{{$customer->id}}">
+                                      @endforeach
+                                  </datalist>
                                 </div>
                             </div>
 
@@ -123,7 +138,7 @@
                                   <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="material-icons">phone</i></div>
                                   </div>
-                                  <input name="phone" required type="text" class="form-control" placeholder="Phone...">
+                                  <input name="phone" type="text" class="form-control" placeholder="Phone...">
                                 </div>
                             </div>
 
@@ -168,4 +183,8 @@ window.addEventListener('load', function() {
 })
 
 });
+function setParentID(){
+    var value = $('#customer').val();
+    $('#parent_id').val($('#customerdatalistOptions [value="' + value + '"]').data('value'));
+}
 </script>

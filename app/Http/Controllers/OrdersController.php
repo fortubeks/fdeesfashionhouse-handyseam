@@ -211,6 +211,7 @@ class OrdersController extends Controller
                         $outfit_order->tailor_cost = $request->tailor_cost[$key];
                         $outfit_order->material_cost = $request->material_cost[$key];
                         $outfit_order->customer_id = $request->customer_id[$key];
+                        $outfit_order->job_status = $request->job_status[$key];
                     }
                     else{
                         $outfit_order = new OutfitsOrders;

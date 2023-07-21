@@ -20,7 +20,16 @@
                         <input type="text" name="name" class="form-control" value="{{ __($customer->name ?? 'None') }}" > 
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-1">
+                    <label>Parent </label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="material-icons">face</i></div>
+                        </div>
+                        @if($customer->parent) <a href="{{url('/customers/'.$customer->parent_id)}}">{{$customer->parent->name}}</a> @else {{'None'}} @endif
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <label>Phone Number</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -110,6 +119,48 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-plain">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title mt-0">{{ __($customer->name ?? 'None') }} Relatives</h4>
+            <p class="card-category"> </p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="">
+                    <th style="width:35%">Name</th>
+                    <th style="width:30%">Phone</th>
+                    <th style="width:20%">Number of Orders</th>
+                    <th style="width:15%">Total Amount</th>
+                </thead>
+                <tbody>
+                  @forelse($customer->relatives as $_customer)
+                  <tr class="relative" data-id="{{__($_customer->id)}}">
+                  <td>
+                    {{ __($_customer->name ?? 'None') }}
+                  </td>
+                  <td>
+                    {{ __($_customer->phone) }}
+                  </td>
+                  <td style="text-align: center;">
+                    {{ __($_customer->getTotalNumberOfOrders()) }}
+                  </td>
+                  <td>
+                     {{ __($_customer->getTotalAmountOnAllOrders()) }}
+                  </td>
+                  </tr>
+                  @empty
+                  <tr><td colspan="2">No Relatives</td></tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 @endsection
@@ -118,6 +169,13 @@ window.addEventListener('load', function() {
     $('.item').click(function() {
     var id = $(this).attr("data-id");
     var url = "{{ url('orders/') }}/"+id;
+    if(id) {
+        window.location = url;
+    }
+})
+$('.relative').click(function() {
+    var id = $(this).attr("data-id");
+    var url = "{{ url('customers/') }}/"+id;
     if(id) {
         window.location = url;
     }

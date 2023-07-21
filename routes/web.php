@@ -103,7 +103,6 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::get('/weekly-outfit-payments/', [App\Http\Controllers\ExpensesController::class, 'weeklyOutfitPaymentsIndex']);
 	Route::get('/tailor-payment-date-update/', [App\Http\Controllers\ExpensesController::class, 'updateTailorPaymentDate']);
 	Route::get('/outfit-payments-search/', [App\Http\Controllers\ExpensesController::class, 'getWeeklyOutfitsPayments']);
-	Route::post('/delete-customer/{customer_id}', [App\Http\Controllers\CustomersController::class, 'softDeleteCustomer']);
 	Route::get('/resend-verification-email', [App\Http\Controllers\CustomersController::class, 'resendVerificationEmail']);
 	Route::get('/filter-expenses/', [App\Http\Controllers\ExpensesController::class, 'filter']);
 	Route::get('/expenses-search/', [App\Http\Controllers\ExpensesController::class, 'search']);

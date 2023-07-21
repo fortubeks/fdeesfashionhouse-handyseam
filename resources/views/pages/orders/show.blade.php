@@ -56,10 +56,6 @@
                             <select class="form-select" data-status="{{ __($order->status ?? 'None') }}" name="status" id="status">
                                 <option value="Pending Payment">Pending Payment</option>     
                                 <option value="Processing">Processing</option>
-                                <option value="Cutting">Cutting</option>
-                                <option value="Sewing">Sewing</option>
-                                <option value="Ready For Trial">Ready For Trial</option>
-                                <option value="Ready">Ready</option>
                                 <option value="Delivered">Delivered</option>
                             </select> 
                         </div>
@@ -259,6 +255,21 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">
+                                <label for="" class="form-control">Status: </label>
+                            </div>
+                            <div class="col-md-8">
+                        
+                                <select class="form-select job-status" data-status="{{ __($outfit->job_status ?? 'None') }}" name="job_status[]">
+                                    <option value="Cutting">Cutting</option>
+                                    <option value="Sewing">Sewing</option>
+                                    <option value="Ready For Trial">Ready For Trial</option>
+                                    <option value="Ready">Ready</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select> 
+                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-4">
                             <button type="button" data-outfit-id="{{__($outfit->id ?? '') }}" id="btn_print_outfit_inst" class="btn btn-sm btn-primary btn_print_m_ins">Print Measurement & Instruction</button>
                             </div>
@@ -470,6 +481,18 @@ $("#btn_delete").on("click", function(){
 
 var status = $('#status').attr("data-status");
 $('#status option[value="'+status+'"]').attr('selected','selected');
+
+$(".job-status").each(function(){
+    var job_status = $(this).attr("data-status");
+    $(this).find('option').each(function() {
+      console.log(job_status + 'hhh' + $(this).val());
+      if($(this).text() == job_status){
+            $(this).attr('selected','selected');
+        }
+    });
+    
+});
+
 
 });
 

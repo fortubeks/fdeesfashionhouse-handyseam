@@ -26,6 +26,16 @@ class Customer extends Model
         return $this->hasOne('App\Models\Measurement');
     }
 
+    public function parent()
+    {
+        return $this->belongsTo('App\Models\Customer','parent_id');
+    }
+
+    public function relatives()
+    {
+        return $this->hasMany('App\Models\Customer','parent_id');
+    }
+
     public static function getAll(){
         //get a list of all customers
         $customers = Customer::orderBy('created_at','desc')->

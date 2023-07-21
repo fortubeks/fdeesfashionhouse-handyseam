@@ -23,8 +23,7 @@ class CustomersController extends Controller
     public function index()
     {
         $customers = Customer::orderBy('name','desc')->
-        where('user_id','=', auth()->user()->user_account_id)
-        ->where('is_deleted',0)->paginate(10);
+        where('user_id','=', auth()->user()->user_account_id)->paginate(10);
         $view = 'pages.customers.index';
         return view($view)->with('customers',$customers);
     }
@@ -35,7 +34,6 @@ class CustomersController extends Controller
         if($request->search_by == 'phone'){
             $customers = Customer::where('phone',"{$request->search_value}")
             ->where('user_id','=', auth()->user()->user_account_id)
-            ->where('is_deleted',0)
             ->paginate(20)->appends([
                 'search_value' => request('search_value'),
                 'search_by' => request('search_by'),
@@ -60,7 +58,6 @@ class CustomersController extends Controller
         if($request->search_by == 'name'){
             $customers = Customer::where('name', 'like', '%'."{$request->search_value}".'%')
             ->where('user_id','=', auth()->user()->user_account_id)
-            ->where('is_deleted',0)
             ->paginate(20)->appends([
                 'search_value' => request('search_value'),
                 'search_by' => request('search_by'),
@@ -105,7 +102,6 @@ class CustomersController extends Controller
     {
         //validate customer entry, store and set view to list of customers
         $validatedData = $request->validate([
-            'phone' => ['required'],
             'name' => ['required'],
         ]);
         if(Customer::where('user_id',auth()->user()->user_account->id)->where('phone',$request->phone)->exists()){
@@ -115,6 +111,7 @@ class CustomersController extends Controller
         $customer = new Customer;
         $customer->user_id = auth()->user()->user_account_id;
         $customer->phone = $request->phone;
+        $customer->parent_id = $request->parent_id;
         $customer->name = $request->name;
         $customer->address = $request->address;
         $customer->email = $request->email;
@@ -218,16 +215,6 @@ class CustomersController extends Controller
         $customer = Customer::findOrFail($id);
         $customer->delete();
         return redirect('customers')->with('status','Delete successful');
-    }
-
-    public function softDeleteCustomer($customer_id){
-        $customer = Customer::find($customer_id);
-        if($customer){
-            $customer->is_deleted = 1;
-            $customer->save();
-            return redirect('customers')->with('status','Delete successful');
-        }
-        return redirect('customers')->with('status','Customer not found');
     }
 
     public function resendVerificationEmail(){
