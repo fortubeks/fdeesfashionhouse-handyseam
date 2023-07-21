@@ -26,6 +26,7 @@
               <select class="form-select" name="search_by" aria-label=".form-select-sm example">
                 <option selected value="name">Search By Name</option>
                 <option value="phone">Search By Phone</option>
+                <option value="unique_id">Search By ID</option>
               </select>
             </div>
             <div class="col-md-3">
@@ -54,9 +55,10 @@
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead class="">
+                    <th style="width:10%">ID</th>
                     <th style="width:35%">Name</th>
                     <th style="width:30%">Phone</th>
-                    <th style="width:20%">Number of Orders</th>
+                    <th style="width:10%">Number of Orders</th>
                     <th style="width:15%">Total Amount</th>
                 </thead>
                 <tbody>
@@ -65,6 +67,9 @@
                     @endif
                   @foreach($customers ?? [] as $customer)
                   <tr class="item" data-id="{{__($customer->id)}}">
+                  <td>
+                    {{ __($customer->getUniqueID()) }}
+                  </td>
                   <td>
                     {{ __($customer->name ?? 'None') }}
                   </td>
@@ -114,32 +119,35 @@
                                   <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="material-icons">face</i></div>
                                   </div>
-                                  <input type="text" name="name" required class="form-control" placeholder="Customer Name...">
+                                  <input type="text" name="name" required class="form-control required" placeholder="Customer Name..."><span>*</span>
                                 </div>
                             </div>
 
                             <div class="form-group bmd-form-group">
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="material-icons">face</i></div>
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <div class="input-group-text"><i class="material-icons">phone</i></div>
+                                    </div>
+                                    <input type="hidden" id="country_id" name="country_id">
+                                    <input oninput="setCode()" class="form-control" list="customerphonedatalistOptions" id="country" placeholder="Country Code">
+                                    <datalist id="customerphonedatalistOptions">
+                                        @foreach(getModelList('countries') as $country)
+                                        <option value="{{$country->name}}" data-value="{{$country->id}}">
+                                        @endforeach
+                                    </datalist>
                                   </div>
-                                  <input type="hidden" id="parent_id" name="parent_id">
-                                  <input oninput="setParentID()" class="form-control" list="customerdatalistOptions" id="customer" placeholder="Parent Customer if anny">
-                                  <datalist id="customerdatalistOptions">
-                                      @foreach(getModelList('customers') as $customer)
-                                      <option value="{{$customer->name}}" data-value="{{$customer->id}}">
-                                      @endforeach
-                                  </datalist>
                                 </div>
-                            </div>
-
-                            <div class="form-group bmd-form-group">
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <div class="input-group-text"><i class="material-icons">phone</i></div>
+                                <div class="col-md-8">
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <div class="input-group-text"><i class="material-icons">phone</i></div>
+                                    </div>
+                                    <input name="phone" type="text" class="form-control" placeholder="Phone...">
                                   </div>
-                                  <input name="phone" type="text" class="form-control" placeholder="Phone...">
                                 </div>
+                              </div>
                             </div>
 
                             <div class="form-group bmd-form-group">
@@ -156,8 +164,23 @@
                                   <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="material-icons">map</i></div>
                                   </div>
-                                  <textarea name="address" rows="2" class="form-control" value="" placeholder="Address ..."></textarea> 
+                                  <textarea name="address" rows="1" class="form-control" value="" placeholder="Address ..."></textarea> 
                                 </div>
+                            </div>
+
+                            <div class="form-group bmd-form-group">
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <div class="input-group-text"><i class="material-icons">face</i></div>
+                                </div>
+                                <input type="hidden" id="parent_id" name="parent_id">
+                                <input oninput="setParentID()" class="form-control" list="customerdatalistOptions" id="customer" placeholder="Parent Customer">
+                                <datalist id="customerdatalistOptions">
+                                    @foreach(getModelList('customers') as $customer)
+                                    <option value="{{$customer->name}}" data-value="{{$customer->id}}">
+                                    @endforeach
+                                </datalist>
+                              </div>
                             </div>
 
                             
@@ -172,6 +195,12 @@
         </div>
     </div>
 </div>
+<style>
+   .required:after {
+    content:" *";
+    color: red;
+   }
+</style>
 <script>
 window.addEventListener('load', function() {
     $('.item').click(function() {
@@ -186,5 +215,9 @@ window.addEventListener('load', function() {
 function setParentID(){
     var value = $('#customer').val();
     $('#parent_id').val($('#customerdatalistOptions [value="' + value + '"]').data('value'));
+}
+function setCode(){
+    var value = $('#country').val();
+    $('#country_id').val($('#customerphonedatalistOptions [value="' + value + '"]').data('value'));
 }
 </script>

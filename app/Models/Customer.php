@@ -51,5 +51,9 @@ class Customer extends Model
    public function getTotalAmountOnAllOrders(){
     $orders = $this->orders;
     return formatCurrency($orders->sum('total_amount'));
-}
+    } 
+    
+    public function getUniqueID(){
+        return auth()->user()->user_account_id . '$' . $this->id;
+    }
 }

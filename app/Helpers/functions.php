@@ -1,4 +1,6 @@
 <?php
+
+use App\Models\Country;
 use Magarrent\LaravelCurrencyFormatter\Facades\Currency;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -44,6 +46,9 @@ function getModelList($model){
     }
     if($model == 'inventory'){
         $model_list = auth()->user()->user_account->items()->where('for_sale',0)->get();
+    }
+    if($model == 'countries'){
+        $model_list = Country::all();
     }
     return $model_list;
 }

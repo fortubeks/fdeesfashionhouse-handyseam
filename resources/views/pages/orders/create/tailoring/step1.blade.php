@@ -26,6 +26,7 @@
               <select class="form-select" name="search_by" aria-label=".form-select-sm example">
                 <option selected value="name">Search By Customer Name</option>
                 <option value="phone">Search By Customer Phone</option>
+                <option value="unique_id">Search By ID</option>
               </select>
             </div>
             <div class="col-md-3">
@@ -48,6 +49,7 @@
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead class="">
+                    <th style="width:10%">ID</th>
                     <th style="width:35%">Name</th>
                     <th style="width:30%">Phone</th>
                 </thead>
@@ -57,6 +59,9 @@
                     @endif
                   @foreach($customers ?? [] as $customer)
                   <tr class="item" data-id="{{__($customer->id)}}">
+                  <td>
+                    {{ __($customer->getUniqueID()) }}
+                  </td>
                   <td>
                     {{ __($customer->name ?? 'None') }}
                   </td>
