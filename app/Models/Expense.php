@@ -11,7 +11,7 @@ class Expense extends Model
     use HasFactory;
     public function category()
     {
-        return $this->belongsTo('App\Models\ExpenseCategory');
+        return $this->belongsTo('App\Models\ExpenseCategory')->withTrashed();
     }
 
     public function category_details()

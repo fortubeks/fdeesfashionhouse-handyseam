@@ -57,12 +57,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function purchases()
     {
-        return $this->hasMany('App\Models\Purchase');
+        return $this->hasMany('App\Models\Purchase')->withTrashed();
     }
 
     public function expense_categories()
     {
-        return $this->hasMany('App\Models\ExpenseCategory');
+        return $this->hasMany('App\Models\ExpenseCategory')->withTrashed();
     }
 
     public function items()
