@@ -108,7 +108,7 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::get('/expenses-search/', [App\Http\Controllers\ExpensesController::class, 'search']);
 
 	Route::get('/filter-orders/', [App\Http\Controllers\OrdersController::class, 'filter']);
-	Route::post('/add-items-used/', [App\Http\Controllers\OrderController::class, 'addItemsUsed']);
+	Route::post('/add-items-used/', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
 	
 });
 
