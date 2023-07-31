@@ -82,15 +82,19 @@ class CustomersController extends Controller
 
         if($request->search_by == 'unique_id'){
             $array = explode('$', $request->search_value);
-            $id = $array[1];
-            $customers = Customer::where('id', $id)
-            ->where('user_id','=', auth()->user()->user_account_id)
-            ->paginate(20)->appends([
-                'search_value' => request('search_value'),
-                'search_by' => request('search_by'),
-                'origin' => request('origin'),
-                'order_type' => request('order_type'),
-                ]);
+            $customers = [];
+            if(count($array) >1){
+                $id = $array[1];
+                $customers = Customer::where('id', $id)
+                ->where('user_id','=', auth()->user()->user_account_id)
+                ->paginate(20)->appends([
+                    'search_value' => request('search_value'),
+                    'search_by' => request('search_by'),
+                    'origin' => request('origin'),
+                    'order_type' => request('order_type'),
+                    ]);
+            }
+            
             if(count($customers)>0){
                 if($request->origin == 'order_creation'){
                     return view('pages.orders.create.'.$request->order_type.'.step1')->with('customers', $customers);
