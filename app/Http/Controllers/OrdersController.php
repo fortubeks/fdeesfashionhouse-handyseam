@@ -121,7 +121,7 @@ class OrdersController extends Controller
             $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring"){
-                //$sms_response = Http::get($request_url);
+                $sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
             }
         }
