@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 
 	Route::get('/filter-orders/', [App\Http\Controllers\OrdersController::class, 'filter']);
 	Route::post('/add-items-used/', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
+
+	Route::get('/send-whatsapp-message/', [App\Http\Controllers\HomeController::class, 'sendwhatsappmessage']);
 	
 });
 

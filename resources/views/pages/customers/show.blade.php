@@ -35,7 +35,7 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="material-icons">phone</i></div>
                         </div>
-                        <input type="text" name="phone" class="form-control" value="{{ __($customer->phone ?? 'None') }}" >
+                        <input type="text" name="phone" class="form-control" value="{{ __($customer->whatsappNumber() ?? 'None') }}" >
                     </div>
                 </div>
                 <div class="col-md-3">

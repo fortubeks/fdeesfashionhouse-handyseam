@@ -68,3 +68,27 @@ function paginate($items, $perPage = 5, $page = null, $options = [])
     $items = $items instanceof Collection ? $items : Collection::make($items);
     return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
 }
+
+function removeSpaces($inputString) {
+    return str_replace(' ', '', $inputString);
+}
+
+function sendwhatsappmessage($to,$template_name) {
+    try {
+        $url = "https://graph.facebook.com/v17.0/108752848993090/messages";
+    
+        $client = new \GuzzleHttp\Client();
+        $headers = ["Authorization" => "Bearer " . env('WHATSAPP_TOKEN'), "Content-Type" => "application/json" ];
+        $params = ["messaging_product" =>  "whatsapp", "to" => $to, "type" => "template",
+        "template" => ["name" => $template_name, "language" => ["code" => "en_US"]],];
+    
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', $url, ["headers" => $headers, "form_params" => $params]);
+        
+        $data = $response->getBody();
+        return $data;
+    } catch (Exception $ex) {
+        //throw $th;
+    }
+   
+}

@@ -36,6 +36,11 @@ class Customer extends Model
         return $this->hasMany('App\Models\Customer','parent_id');
     }
 
+    public function country()
+    {
+        return $this->belongsTo('App\Models\Country','country_id');
+    }
+
     public static function getAll(){
         //get a list of all customers
         $customers = Customer::orderBy('created_at','desc')->
@@ -55,5 +60,34 @@ class Customer extends Model
     
     public function getUniqueID(){
         return auth()->user()->user_account_id . '$' . $this->id;
+    }
+
+    public function whatsappNumber(){
+        //if number has space remove it
+        $whatsapp_number = removeSpaces($this->phone);
+        //if number has 0 as first character remove it
+        $whatsapp_number = ltrim($whatsapp_number, '0');
+        //if number has + (Good to go)
+        if(substr($whatsapp_number, 0, 1) === '+'){
+            return $whatsapp_number;
+        }
+        if($this->country){
+            return $this->country->phonecode.$whatsapp_number;
+        }
+        else{
+            if(auth()->user()->user_account->app_settings->business_currency){
+                $country = Country::where('iso',substr(auth()->user()->user_account->app_settings->business_currency, 0, -1))->first();
+                if($country){
+                    return '+'.$country->phonecode.$whatsapp_number;
+                }
+                else{
+                    return $whatsapp_number;
+                }
+            }
+            
+        }
+        //if customer has country code, add country tel code and return
+        //if customer not have country code, use user currency to get counrty and code
+
     }
 }

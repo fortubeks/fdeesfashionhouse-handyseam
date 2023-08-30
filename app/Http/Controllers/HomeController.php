@@ -74,4 +74,21 @@ class HomeController extends Controller
         return redirect()->back()->with("success","Password changed successfully !");
 
     }
+
+    function sendwhatsappmessage() {
+        $to = "+2348090839412";
+        $template_name = "new_order";
+        $url = "https://graph.facebook.com/v17.0/108752848993090/messages";
+        
+        $client = new \GuzzleHttp\Client();
+        $headers = ["Authorization" => "Bearer " . env('WHATSAPP_TOKEN'), "Content-Type" => "application/json" ];
+        $params = ["messaging_product" =>  "whatsapp", "to" => $to, "type" => "template",
+        "template" => ["name" => $template_name, "language" => ["code" => "en_US"]],];
+    
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', $url, ["headers" => $headers, "form_params" => $params]);
+        
+        $data = $response->getBody();
+        return $data;
+    }
 }
