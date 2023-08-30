@@ -67,9 +67,9 @@ class Customer extends Model
         $whatsapp_number = removeSpaces($this->phone);
         //if number has 0 as first character remove it
         $whatsapp_number = ltrim($whatsapp_number, '0');
-        //if number has + (Good to go)
+        //if number has + remove it
         if(substr($whatsapp_number, 0, 1) === '+'){
-            return $whatsapp_number;
+            return ltrim($whatsapp_number, '+');
         }
         if($this->country){
             return $this->country->phonecode.$whatsapp_number;
@@ -78,7 +78,7 @@ class Customer extends Model
             if(auth()->user()->user_account->app_settings->business_currency){
                 $country = Country::where('iso',substr(auth()->user()->user_account->app_settings->business_currency, 0, -1))->first();
                 if($country){
-                    return '+'.$country->phonecode.$whatsapp_number;
+                    return $country->phonecode.$whatsapp_number;
                 }
                 else{
                     return $whatsapp_number;
