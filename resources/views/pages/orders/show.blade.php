@@ -384,7 +384,7 @@
                         <div class="card-body">
 
                             <div class="form-group bmd-form-group mb-4">
-                              <select class="form-select" onchange="setCost(this)" name="item_id" id="item">
+                              <select required class="form-select" onchange="setCost(this)" name="item_id" id="item">
                                 <option value="">--Select--</option>
                                   @foreach (getModelList('inventory') as $item)
                                   <option data-cost="{{ __($item->cost_price) }}" value="{{ __($item->id) }}">{{ __($item->description) }}</option>

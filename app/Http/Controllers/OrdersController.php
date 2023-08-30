@@ -82,7 +82,7 @@ class OrdersController extends Controller
 
         if($request->order_type == 'tailoring'){
             //$order->instruction = session('order_style');
-           
+           if(session()->has('outfit_orders')){
             foreach(session('outfit_orders') as $key => $outfit){
                 $outfit_order = new OutfitsOrders;
                 $outfit_order->order_id = $order->id;
@@ -100,6 +100,8 @@ class OrdersController extends Controller
 
                 $outfit_order->save();
             }
+           }
+            
         }
 
         $request->session()->forget(['customer_id', 'outfit_orders']);
