@@ -76,15 +76,67 @@ class HomeController extends Controller
     }
 
     function sendwhatsappmessage() {
-        $to = "+2348090839412";
-        $template_name = "new_order";
+        $to = "2348090839412";
+        $template_name = "new_order_1";
         $url = "https://graph.facebook.com/v17.0/108752848993090/messages";
         
         $client = new \GuzzleHttp\Client();
         $headers = ["Authorization" => "Bearer " . env('WHATSAPP_TOKEN'), "Content-Type" => "application/json" ];
-        $params = ["messaging_product" =>  "whatsapp", "to" => $to, "type" => "template",
-        "template" => ["name" => $template_name, "language" => ["code" => "en_US"]],];
+        // $params = ["messaging_product" =>  "whatsapp", "to" => $to, "type" => "template",
+        // "template" => ["name" => $template_name, "language" => ["code" => "en_US"]]];
+        
+        $arr = array(
+            "type" => "text",
+            "text" => "28-05-2023"
+        );
+        $arr1 =array(
+            "type" => "text",
+            "text" => "Jozzy Stores"
+        );
+        $arr2 = array(
+            "type" => "text",
+            "text" => "234"
+        );
+
+        $myJSON = json_encode($arr);
+        $myJSON2 = json_encode($arr1);
+        $myJSON3 = json_encode($arr2);
     
+        $params = [
+            "messaging_product" =>  "whatsapp",
+            "to" => $to,
+            "type" => "template",
+            "template" => [
+                "namespace" => "46e87f57_c607_4e9f_b8f5_a8700ba35edb",
+                "language" => [
+                    "code" => "en_US"
+                ],
+                "name" => $template_name,
+                "components" => [
+                    
+                    [
+                        "type" => "body",
+                        "parameters" => [
+                            $myJSON,$myJSON2
+                        ] 
+                    # end body
+                    ],
+        
+                    # The following part of this code example includes several possible button types, 
+                    # not all are required for an interactive message template API call.
+                    
+                    [
+                        "type" => "button",
+                        "sub_type" => "url",
+                        "index" => "0", 
+                        "parameters" => [
+                            $myJSON3
+                        ]
+                    ],
+                    
+                ]
+            ]
+        ];
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', $url, ["headers" => $headers, "form_params" => $params]);
         

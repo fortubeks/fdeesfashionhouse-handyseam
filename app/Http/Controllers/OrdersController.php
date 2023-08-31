@@ -125,7 +125,7 @@ class OrdersController extends Controller
             if ($order->order_type == "tailoring"){
                 //$sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
-                sendwhatsappmessage($customer->whatsappNumber(),"new_order");
+                sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
             }
         }
 
