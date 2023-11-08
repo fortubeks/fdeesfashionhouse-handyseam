@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class Customer extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
+    protected $fillable = ['name', 'address', 'phone', 'email', 'user_id'];
 
     public function routeNotificationForWhatsApp()
     {

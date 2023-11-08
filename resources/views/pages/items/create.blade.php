@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="card ">
-                        <form action="{{ url('items/') }}" method="post">
+                        <form action="{{ url('items/') }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body ">
                                 <div class="form-group bmd-form-group mb-4">
@@ -49,6 +49,10 @@
                                 <div class="form-group bmd-form-group mb-4">
                                     <label>Quantity in Stock</label>
                                     <input type="number" required name="qty" class="form-control" placeholder="Enter Quantity in Stock" value="0" aria-label="Quantity in Stock">
+                                </div> 
+                                <div class="form-contol mb-4">
+                                    <label>Image</label>
+                                    <input type="file" name="image" class="form-control mb-4" placeholder="Image" >
                                 </div> 
                             </div>
                             <div class="card-footer ">

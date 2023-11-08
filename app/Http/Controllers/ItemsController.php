@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\ItemCategory;
+use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 class ItemsController extends Controller
 {
@@ -72,8 +73,28 @@ class ItemsController extends Controller
         $item->unit_measurement = $request->unit_measurement;
         $item->for_sale = isset($request->for_sale) ? 1 : 0;
         $item->user_id = auth()->user()->user_account_id;
+        if($item->for_sale == 1){
+            $item->price = $request->price;
+        }
 
         $item->save();
+
+        if($request->file('image')){
+            $allowedfileExtension=['pdf','jpg','png','jpeg'];
+            
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $check=in_array($extension,$allowedfileExtension);
+            
+            if($check)
+            {              
+                $newfilename = time().rand(111, 9999).".". $extension;
+                FacadesStorage::disk('items')->put($newfilename, file_get_contents($file));
+                $item->image = $newfilename;
+            }
+            $item->save();
+        }
         
         return redirect('items')->with('status', 'Item was added successfully');
     }
@@ -132,6 +153,23 @@ class ItemsController extends Controller
         $item->for_sale = isset($request->for_sale) ? 1 : 0;
 
         $item->save();
+
+        if($request->file('image')){
+            $allowedfileExtension=['pdf','jpg','png','jpeg'];
+            
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $check=in_array($extension,$allowedfileExtension);
+            
+            if($check)
+            {              
+                $newfilename = time().rand(111, 9999).".". $extension;
+                FacadesStorage::disk('items')->put($newfilename, file_get_contents($file));
+                $item->image = $newfilename;
+            }
+            $item->save();
+        }
         
         return redirect('items')->with('status', 'Item was updated successfully');
     }

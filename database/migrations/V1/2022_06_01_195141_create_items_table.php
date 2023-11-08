@@ -21,6 +21,7 @@ class CreateItemsTable extends Migration
             $table->double('cost_price')->nullable();
             $table->double('price')->nullable();
             $table->integer('inventory_quantity');
+            $table->string('image');
             $table->timestamps();
         });
     }

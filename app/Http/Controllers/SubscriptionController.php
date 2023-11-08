@@ -63,7 +63,7 @@ class SubscriptionController extends Controller
             return redirect('/home')->with('status','You have successfully upgraded to HandySeam Premium');
         }
         if($status == 'failed'){
-            return redirect('/home')->with('fail','There was an error');
+            return redirect('/home')->with('fail','There was an error. Contact support if you were debited');
         }
     }
 }

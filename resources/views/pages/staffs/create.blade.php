@@ -66,7 +66,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="card " id="account-div"><div class="card-header">
-                  <h4 class="card-title mt-0">{{ __('For Manager Account Only') }}</h4></div>
+                  <h4 class="card-title mt-0">{{ __('For Manager Account Only (optional for tailor)') }}</h4></div>
                   <div class="card-body ">
                     <div class="form-group bmd-form-group mb-4">
                       <input type="email" name="email" class="form-control" placeholder="Email Address"  >
@@ -97,7 +97,7 @@ window.addEventListener('load', function() {
     $('#account-div').css("display","block");
    }
    if($(this).val() == "tailor"){
-    $('#account-div').css("display","none");
+    $('#account-div').css("display","block");
    }
 })
 });

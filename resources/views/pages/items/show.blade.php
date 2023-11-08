@@ -12,7 +12,7 @@
                       <div class="card-header card-header-primary">
                         <h4 class="card-title mt-0">{{ __('Item Details') }}</h4>
                       </div>
-                        <form action="{{ url('items/'.$item->id) }}" method="post">
+                        <form action="{{ url('items/'.$item->id) }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body ">
                                 <div class="form-group bmd-form-group mb-4">
@@ -43,6 +43,12 @@
                                     <label>For Sale</label>
                                     <input type="checkbox" name="for_sale" {{(( $item->for_sale == 1)) ? 'checked' : '' }} class="form-check" >
                                 </div> 
+                                <div class="">
+                                  <?php $url =  asset('/storage/items/'.$item->image); ?>
+                                  <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;">
+                                  <img class="img-thumbnail" width="200px" style="margin-right: 20px;" src="{{ $url }}"/> </a>
+                                  <input type="file" name="image" class="form-control mb-4" placeholder="Image" >
+                                </div>
                             </div>
                             <div class="card-footer ">
                                 <input type="hidden" name="_method" value="PUT">

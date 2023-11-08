@@ -38,13 +38,13 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Date/Time Created</label>
-                                <input type="text" readonly class="form-control" value="{{ __($order->created_at->format('d-m-Y') ?? 'None') }}" >
+                                <input type="text" onfocus="(this.type='date')" name="created_at" style="width: 70%;" value="{{ __($order->created_at->format('d-m-Y') ?? 'None') }}" >
                             </div>
                         </div>
                         <div class="form-row">  
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Expected Date for Fitting</label>
-                                <input type="text" name="expected_delivery_date" class="form-control" value="{{ __($order->expected_delivery_date ?? 'None') }}" >
+                                <input type="text" onfocus="(this.type='date')" name="expected_delivery_date" style="width: 50%;" value="{{ __($order->expected_delivery_date ?? 'None') }}" >
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Total Amount</label>

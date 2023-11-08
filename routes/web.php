@@ -134,8 +134,11 @@ Route::group(['middleware' => ['verified', 'log.activity', 'subscribed'] ], func
 	Route::resources([
 		'sales-report' => App\Http\Controllers\SalesReportController::class,
 		]);
-	Route::get('/sales-report/', [App\Http\Controllers\SalesReportController::class, 'index'])->name('salesreport');
+	Route::get('/sales-report', [App\Http\Controllers\SalesReportController::class, 'index'])->name('salesreport');
 	Route::post('/sales-report/view', [App\Http\Controllers\SalesReportController::class, 'showReport'])->name('salesreportshow');
-	Route::get('/export-customers/', [App\Http\Controllers\CustomersController::class, 'export'])->name('export.customers');
+	Route::get('/export-customers', [App\Http\Controllers\CustomersController::class, 'export'])->name('export.customers');
+	Route::get('/import-customers', [App\Http\Controllers\CustomersController::class, 'viewImportPage'])->name('import.customers');
+	Route::post('/import-customers', [App\Http\Controllers\CustomersController::class, 'import']);
+	Route::get('/download-sample-excel', [App\Http\Controllers\CustomersController::class, 'downloadSampleExcel'])->name('download.sample.excel');
 	});
 Auth::routes(['verify' => true]);

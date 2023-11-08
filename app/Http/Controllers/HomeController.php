@@ -39,7 +39,7 @@ class HomeController extends Controller
             return view('dashboard', compact('orders_due','orders_recent'));
         }
         //else as user is staff
-        if(auth()->user()->user_type == "manager"){
+        if(auth()->user()->user_type == "manager" || auth()->user()->user_type == "tailor"){
             return view('dashboard', compact('orders_due','orders_recent'));
         }
     }

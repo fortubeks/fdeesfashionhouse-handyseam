@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CustomersExport;
+use App\Imports\CustomerImport;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Item;
@@ -261,4 +262,32 @@ class CustomersController extends Controller
     public function export(){
         return Excel::download(new CustomersExport(), 'customers.xlsx');
     }
+
+    public function import(Request $request){
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv'
+        ]);
+
+        $file = $request->file('file');
+
+        Excel::import(new CustomerImport, $file);
+
+        return redirect('customers')->with('status', 'Customers imported successfully');
+    }
+
+    public function viewImportPage()
+    {
+        return view('pages.customers.import');
+    }
+
+    public function downloadSampleExcel(){
+        $file = storage_path('sample-import-customers.xlsx'); // Replace 'sample.xlsx' with the path to your sample Excel file
+        //dd($file);
+        $headers = [
+            'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+
+        return response()->download($file, 'sample-import-customers.xlsx', $headers);
+    }
+
 }

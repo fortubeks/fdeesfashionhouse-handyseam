@@ -24,6 +24,10 @@
                                         <input type="hidden" name="customer_id" class="form-control" value="{{ __($customer->id ?? 'None') }}" >
                                     </div>
                                     <div class="col-md-12 mb-4">
+                                        <label class="bmd-label-floating">Date of Order</label>
+                                        <input placeholder="Date of Order" onfocus="(this.type='date')" value="{{now()}}" name="created_at" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-12 mb-4">
                                         <label for="" class="bmd-label-floating">Amount Charged</label>
                                         <input type="number" name="total_amount" value="{{ __($total_amount) }}" class="form-control" required readonly>
                                     </div>

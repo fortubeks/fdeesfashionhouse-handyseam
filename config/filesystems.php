@@ -49,6 +49,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'items' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/items'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
         'logo_images' => [
             'driver' => 'local',
             'root' => storage_path('app/public/logo_images'),

@@ -47,6 +47,24 @@
                         </div>
                     </div>   
                   </div>
+                  @if($staff->user)
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="card " id="account-div"><div class="card-header">
+                        <h4 class="card-title mt-0">{{ __('For Manager Account Only (optional for tailor)') }}</h4></div>
+                        <div class="card-body ">
+                          <div class="form-group bmd-form-group mb-4">
+                            <input type="email" name="email" class="form-control" value="{{ __($staff->user->email ?? '') }}" placeholder="Email Address"  >
+                          </div>
+                          <div class="form-group bmd-form-group mb-4">
+                            <input type="text" name="password" class="form-control" value="" placeholder="Password" >
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  @endif
                 </div>
               </div>
               <div class="col-md-6">
@@ -69,7 +87,9 @@
                       <input type="text" name="other_information"  value="{{ __($staff->other_information ?? '') }}" class="form-control" placeholder="Other Information" > 
                     </div>
                   </div>
+                  
                 </div>
+                
                 <div class="card-footer ">
                     <input type="hidden" name="_method" value="PUT">
                     <button type="submit" class="btn btn-primary">Update</button> 

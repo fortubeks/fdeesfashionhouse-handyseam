@@ -85,7 +85,7 @@ class StaffsController extends Controller
         ]);
  
         $user = null;
-        if($request->role == "manager"){
+        if(isset($request->email) && isset($request->email)){
             $validatedData = $request->validate([
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                 'password' => ['required', 'string', 'min:8'],
@@ -93,7 +93,7 @@ class StaffsController extends Controller
             $user = new User();
             $user->name = $request->firstname . ' '. $request->lastname;
             $user->phone = $request->phone;
-            $user->user_type = 'manager';
+            $user->user_type = $request->role;
             $user->password = Hash::make($request->password);
             $user->email = $request->email;
             $user->user_account_id = auth()->user()->id;
@@ -173,9 +173,12 @@ class StaffsController extends Controller
        
         $staff->save();
 
-        if($staff->role!='tailor'){
+        if($staff->user){
             $user = User::find($staff->user_id);
             $user->user_status = ($request->user_status == 1) ? 1 : 0;
+            if(isset($request->password)){
+                $user->password = Hash::make($request->password);
+            }
             $user->save();
         }
         

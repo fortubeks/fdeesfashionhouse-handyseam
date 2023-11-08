@@ -80,6 +80,9 @@ class OrdersController extends Controller
 
         $order->save();
 
+        $order->created_at = $request->created_at;
+        $order->save();
+
         if($request->order_type == 'tailoring'){
             //$order->instruction = session('order_style');
            if(session()->has('outfit_orders')){
@@ -199,6 +202,7 @@ class OrdersController extends Controller
         
         $order->status = $request->status;
         $order->total_amount = $request->total_amount; 
+        $order->created_at = $request->created_at;
         $total_amount = 0;
         if($request->order_type == 'tailoring'){
             $order->expected_delivery_date = $request->expected_delivery_date;

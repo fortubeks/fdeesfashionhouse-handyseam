@@ -42,9 +42,12 @@
           <div class="card-header card-header-primary">
             
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-8">
                 <h4 class="card-title mt-0"> Result/List</h4>
                 <p class="card-category"> </p>
+              </div>
+              <div class="col-md-2">
+                <a href="{{url('/import-customers')}}" class="btn btn-primary">Import</a>
               </div>
               <div class="col-md-2">
                 <a href="{{url('/export-customers')}}" class="btn btn-primary">Export</a>
