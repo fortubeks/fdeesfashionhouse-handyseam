@@ -162,7 +162,9 @@
                 <thead class="text-primary">
                   <th>Order Date</th>
                   <th>Customer Name</th>
+                  @if(auth()->user()->user_type != 'tailor')
                   <th>Amount</th>
+                  @endif
                   <th>Fitting Date</th>
                 </thead>
                 <tbody>
@@ -177,9 +179,11 @@
                   <td>
                       {{ __($order->customer->name) }}
                   </td>
+                  @if(auth()->user()->user_type != 'tailor')
                   <td>
                   {{ __(formatCurrency($order->total_amount) ?? 'None') }}
                   </td>
+                  @endif
                   <td>
                   <?php $exp_date = date('d-M-Y', strtotime($order->expected_delivery_date));?>
                   {{ __($exp_date) }}

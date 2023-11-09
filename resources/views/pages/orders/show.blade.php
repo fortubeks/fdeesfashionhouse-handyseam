@@ -16,10 +16,12 @@
                 @csrf
                 <input type="hidden" name="_method" value="DELETE">
             </form>
+            @if(auth()->user()->user_type != 'tailor')
             <button type="button" data-invoice-id="{{__($order->id ?? '') }}" id="btn_print_invoice" class="btn btn-sm btn-primary">Print Thermal Receipt</button>
             <button type="button" data-invoice-id="{{__($order->invoice->id ?? '') }}" id="btn_print_pdf_receipt" class="btn btn-sm btn-primary">Print PDF Receipt</button>
             <button type="button" data-invoice-id="{{__($order->invoice->id ?? '') }}" id="btn_print_pdf_invoice" class="btn btn-sm btn-primary">Print PDF Invoice</button>
             <button id="btn_delete" class="btn btn-sm btn-secondary">Delete Order</button>
+            @endif
             <a href="{{ url('orders/') }}" class="btn btn-sm btn-primary">Back to list<div class="ripple-container"></div></a>
             </div>
         </div><form action="{{ url('orders/'.$order->id) }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
@@ -46,10 +48,12 @@
                                 <label for="" class="">Expected Date for Fitting</label>
                                 <input type="text" onfocus="(this.type='date')" name="expected_delivery_date" style="width: 50%;" value="{{ __($order->expected_delivery_date ?? 'None') }}" >
                             </div>
+                            @if(auth()->user()->user_type != 'tailor')
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Total Amount</label>
                                 <input type="number" name="total_amount" readonly class="form-control" value="{{ __($order->total_amount ?? 'None') }}" >
                             </div>
+                            @endif
                         </div>
                         <div class="form-group">
                             <label for="" class="">Status</label>
@@ -69,6 +73,7 @@
                                         <h4 class="card-title mt-0"> Payments</h4>
                                         <p class="card-category"> </p>
                                     </div>
+                                    @if(auth()->user()->user_type != 'tailor')
                                     <div class="card-body">
                                         @if($order->invoice)
                                         @if(count($order->invoice->payments)>0)
@@ -130,6 +135,7 @@
                                         @endif
                                         
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -175,6 +181,7 @@
                                 <input value="{{$outfit->name}}" type="text" name="name[]" class="form-control">
                             </div>
                         </div>
+                        @if(auth()->user()->user_type != 'tailor')
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-control"> Price </label>
@@ -183,6 +190,7 @@
                                 <input value="{{$outfit->price}}" step=".001" min="0" type="number" name="price[]" class="form-control">
                             </div>
                         </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-control"> Quantity </label>
@@ -298,6 +306,7 @@
                 </div>
                 
                 @endforeach
+                @if(auth()->user()->user_type != 'tailor')
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row" id="stylesForUploadContainer"></div>
@@ -313,7 +322,7 @@
                         </div>
                     </div>
                 </div>
-                
+                @endif
                 @else
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -355,10 +364,12 @@
         <div class="row justify-content-center">
             <div class="col-sm-6 mx-auto" style="text-align:center">
                 <input type="hidden" name="order_type" class="form-control" value="{{ __($order->order_type ?? 'None') }}" >
+                @if(auth()->user()->user_type != 'tailor')
                 <div class="form-group">
                     <input type="hidden" name="_method" value="PUT">
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
+                @endif
             </div>
         </div>
         </form>
