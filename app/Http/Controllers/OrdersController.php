@@ -124,12 +124,11 @@ class OrdersController extends Controller
             $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring"){
-                //$sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
                 if(auth()->user()->user_account->isPremiumUser()){
-                    //sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
+                    sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
                     if($user_account_settings->business_currency == "NGN"){
-                        //$sms_response = Http::get($request_url);
+                        $sms_response = Http::get($request_url);
                     }
                 }
                 
