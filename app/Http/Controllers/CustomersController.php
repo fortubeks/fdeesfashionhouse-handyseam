@@ -207,6 +207,7 @@ class CustomersController extends Controller
         $customer->name = $request->name;
         $customer->address = $request->address;
         $customer->email = $request->email;
+        $customer->country_id = $request->country_id;
     
         $customer->save();
         

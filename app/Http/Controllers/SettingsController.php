@@ -10,10 +10,6 @@ use Storage;
 
 class SettingsController extends Controller
 {
-    public function __construct()
-    {
-       
-    }
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +17,7 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        $appSetting = Setting::where('user_id', auth()->user()->id)->first();
+        $appSetting = Setting::where('user_id', auth()->user()->user_account->id)->first();
         return view('pages.settings.show')->with('setting',$appSetting);
     }
 
@@ -80,10 +76,7 @@ class SettingsController extends Controller
             
         }
         $encoded_M_details = json_encode($m_details);
-        // if (AppSetting::where('user_id', Auth::user()->id)->exists()) {
-        //     $appSetting = AppSetting::where('user_id', Auth::user()->id)->first();
-        //     return view('pages.settings.setup.business-info')->with('setting',$appSetting);
-        // }
+
         $appSetting = Setting::where('user_id', auth()->user()->id)->first();
         
         $appSetting->measurement_details = $encoded_M_details;
@@ -182,7 +175,7 @@ class SettingsController extends Controller
         }
         if($request->hasFile('business_logo'))
             {
-                $allowedfileExtension=['jpeg','jpg','png'];
+                $allowedfileExtension=['png'];
             
                 $name = $request->file('business_logo')->getClientOriginalName();
                 $extension = $request->business_logo->getClientOriginalExtension();

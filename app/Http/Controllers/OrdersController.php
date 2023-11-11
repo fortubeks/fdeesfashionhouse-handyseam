@@ -19,10 +19,6 @@ use Illuminate\Support\Facades\Http;
 
 class OrdersController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -65,14 +61,16 @@ class OrdersController extends Controller
             'total_amount' => ['required'],
         ]);
 
-        $vat = auth()->user()->user_account->app_settings->vat/100 * $request->total_amount;
+        $user_account_settings = auth()->user()->user_account->app_settings;
+
+        $vat = $user_account_settings->vat/100 * $request->total_amount;
         
         $order = new Order;
         $order->customer_id = $request->customer_id;
         $order->total_amount = $request->total_amount; 
         $order->vat = $vat; 
         $order->order_type = $request->order_type;
-        $order->user_id = auth()->user()->user_account_id;
+        $order->user_id = $user_account_settings->user_id;
         $order->status = 'Pending Payment';
         if($request->order_type == 'tailoring'){
             $order->expected_delivery_date = $request->expected_delivery_date;
@@ -89,7 +87,7 @@ class OrdersController extends Controller
             foreach(session('outfit_orders') as $key => $outfit){
                 $outfit_order = new OutfitsOrders;
                 $outfit_order->order_id = $order->id;
-                $outfit_order->user_id = auth()->user()->user_account_id;
+                $outfit_order->user_id = $user_account_settings->user_id;
 
                 $titles = explode('<?>',$outfit);
                 $outfit_order->name = $titles[0];
@@ -118,17 +116,23 @@ class OrdersController extends Controller
         //send sms
         if($request->order_type == 'tailoring'){
             $customer = Customer::findOrFail($request->customer_id);
-            $api_key = auth()->user()->user_account->app_settings->sms_api_key;
-            $username = auth()->user()->user_account->app_settings->sms_api_username;
-            $sender = auth()->user()->user_account->app_settings->sms_sender;
-			$business_name = auth()->user()->user_account->app_settings->business_name;
+            $api_key = $user_account_settings->sms_api_key;
+            $username = $user_account_settings->sms_api_username;
+            $sender = $user_account_settings->sms_sender;
+			$business_name = $user_account_settings->business_name;
             $msg = 'Thank you for your order. Your expected fitting date is '. $order->expected_delivery_date .'. Thank you for choosing '.$business_name;
             $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring"){
                 //$sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
-                sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
+                if(auth()->user()->user_account->isPremiumUser()){
+                    //sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
+                    if($user_account_settings->business_currency == "NGN"){
+                        //$sms_response = Http::get($request_url);
+                    }
+                }
+                
             }
         }
 

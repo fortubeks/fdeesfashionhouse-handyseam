@@ -54,8 +54,8 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('pages.upgrade');
 	})->name('upgrade');
 });
-
-Route::group(['middleware' => ['auth', 'log.activity']], function () {
+//Route::group(['middleware' => ['auth', 'log.activity']]
+Route::group(['middleware' => ['auth']], function () {
 	//Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
 	Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
 	Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
@@ -88,7 +88,7 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::get('/payments/printPDFInvoice/{invoice_id}', [App\Http\Controllers\InvoicesController::class, 'printInvoice']);
 	Route::get('/payments/printThermalInvoice/{order_id}', [App\Http\Controllers\PrintController::class, 'printThermalInvoice']);
 	Route::get('/payments/printPDFReceipt/{invoice_id}', [App\Http\Controllers\InvoicesController::class, 'printReceipt']);
-	Route::get('/payments-search/', [App\Http\Controllers\PaymentsController::class, 'search']);
+	Route::get('/payments-search', [App\Http\Controllers\PaymentsController::class, 'search']);
 
 	Route::get('/measurement/print/{measurement_id}', [App\Http\Controllers\MeasurementsController::class, 'printMeasurement']);
 	Route::get('/printMeasurementInst/{outfit_id}', [App\Http\Controllers\PrintController::class, 'printMeasurementAndInstruction']);
@@ -99,22 +99,22 @@ Route::group(['middleware' => ['auth', 'log.activity']], function () {
 	Route::post('/save-customer-measurements/{customer_id}', [App\Http\Controllers\CustomersController::class, 'updateMeasurement']);
 	Route::get('/update-measurement-settings', [App\Http\Controllers\SettingsController::class, 'showupdateMeasurementSettingsForm']);
 	Route::post('/update-measurement-settings', [App\Http\Controllers\SettingsController::class, 'updateMeasurement']);
-	Route::get('/admin-staffs-search/', [App\Http\Controllers\StaffsController::class, 'search']);
-	Route::get('/weekly-outfit-payments/', [App\Http\Controllers\ExpensesController::class, 'weeklyOutfitPaymentsIndex']);
-	Route::get('/tailor-payment-date-update/', [App\Http\Controllers\ExpensesController::class, 'updateTailorPaymentDate']);
-	Route::get('/outfit-payments-search/', [App\Http\Controllers\ExpensesController::class, 'getWeeklyOutfitsPayments']);
+	Route::get('/admin-staffs-search', [App\Http\Controllers\StaffsController::class, 'search']);
+	Route::get('/weekly-outfit-payments', [App\Http\Controllers\ExpensesController::class, 'weeklyOutfitPaymentsIndex']);
+	Route::get('/tailor-payment-date-update', [App\Http\Controllers\ExpensesController::class, 'updateTailorPaymentDate']);
+	Route::get('/outfit-payments-search', [App\Http\Controllers\ExpensesController::class, 'getWeeklyOutfitsPayments']);
 	Route::get('/resend-verification-email', [App\Http\Controllers\CustomersController::class, 'resendVerificationEmail']);
-	Route::get('/filter-expenses/', [App\Http\Controllers\ExpensesController::class, 'filter']);
-	Route::get('/expenses-search/', [App\Http\Controllers\ExpensesController::class, 'search']);
+	Route::get('/filter-expenses', [App\Http\Controllers\ExpensesController::class, 'filter']);
+	Route::get('/expenses-search', [App\Http\Controllers\ExpensesController::class, 'search']);
 
-	Route::get('/filter-orders/', [App\Http\Controllers\OrdersController::class, 'filter']);
-	Route::post('/add-items-used/', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
+	Route::get('/filter-orders', [App\Http\Controllers\OrdersController::class, 'filter']);
+	//Route::post('/add-items-used', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
 
-	Route::get('/send-whatsapp-message/', [App\Http\Controllers\HomeController::class, 'sendwhatsappmessage']);
+	Route::get('/send-whatsapp-message', [App\Http\Controllers\HomeController::class, 'sendwhatsappmessage']);
 	
 });
 
-Route::group(['middleware' => ['auth', 'verified', 'log.activity'] ], function () {
+Route::group(['middleware' => ['auth', 'verified'] ], function () {
 Route::resources([
     'items' => App\Http\Controllers\ItemsController::class,
     'customers' => App\Http\Controllers\CustomersController::class,
@@ -122,17 +122,19 @@ Route::resources([
     'measurements' => App\Http\Controllers\MeasurementsController::class,
     'invoices' => App\Http\Controllers\InvoicesController::class,
     'payments' => App\Http\Controllers\PaymentsController::class,
-    'staffs' => App\Http\Controllers\StaffsController::class,
+    //'staffs' => App\Http\Controllers\StaffsController::class,
     'settings' => App\Http\Controllers\SettingsController::class,
     'expense-categories' => App\Http\Controllers\ExpenseCategoriesController::class,
-    'expenses' => App\Http\Controllers\ExpensesController::class,
+    //'expenses' => App\Http\Controllers\ExpensesController::class,
     'item-categories' => App\Http\Controllers\ItemCategoriesController::class,
 	'purchases' => App\Http\Controllers\PurchaseController::class,
 	]);
 });
-Route::group(['middleware' => ['verified', 'log.activity', 'subscribed'] ], function () {
+Route::group(['middleware' => ['verified', 'subscribed'] ], function () {
 	Route::resources([
 		'sales-report' => App\Http\Controllers\SalesReportController::class,
+		'staffs' => App\Http\Controllers\StaffsController::class,
+		'expenses' => App\Http\Controllers\ExpensesController::class,
 		]);
 	Route::get('/sales-report', [App\Http\Controllers\SalesReportController::class, 'index'])->name('salesreport');
 	Route::post('/sales-report/view', [App\Http\Controllers\SalesReportController::class, 'showReport'])->name('salesreportshow');
@@ -140,5 +142,6 @@ Route::group(['middleware' => ['verified', 'log.activity', 'subscribed'] ], func
 	Route::get('/import-customers', [App\Http\Controllers\CustomersController::class, 'viewImportPage'])->name('import.customers');
 	Route::post('/import-customers', [App\Http\Controllers\CustomersController::class, 'import']);
 	Route::get('/download-sample-excel', [App\Http\Controllers\CustomersController::class, 'downloadSampleExcel'])->name('download.sample.excel');
+	Route::post('/add-items-used', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
 	});
 Auth::routes(['verify' => true]);

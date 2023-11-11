@@ -7,7 +7,7 @@
         @csrf
     <div class="row">
       <div class="col-md-4 mb-3"> 
-        <input type="text" required name="description" value="" class="form-control" placeholder="Enter New Item Category" aria-label="Enter Item Description">
+        <input type="text" required name="description" value="" class="form-control" placeholder="Enter New Item Category Name" aria-label="Enter Item Description">
       </div>
         
       <div class="col-md-4 mb-3">

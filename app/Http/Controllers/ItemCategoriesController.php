@@ -7,10 +7,6 @@ use App\Models\ItemCategory;
 
 class ItemCategoriesController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -64,7 +60,8 @@ class ItemCategoriesController extends Controller
     public function show($id)
     {
         $item_category = ItemCategory::findOrFail($id);
-        return view('pages.item-categories.show')->with('item_category',$item_category);
+        $items = $item_category->items;
+        return view('pages.item-categories.show')->with(compact('item_category','items'));
     }
 
     /**

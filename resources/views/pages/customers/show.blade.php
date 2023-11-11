@@ -30,15 +30,30 @@
                     </div>
                 </div>
                 <div class="col-md-2">
+                    <label>Phone Code </label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="material-icons">phone</i></div>
+                      </div>
+                      <input type="hidden" id="country_id" name="country_id">
+                      <input oninput="setCode()" class="form-control" value="{{$customer->phoneCode()}}" list="customerphonedatalistOptions" id="country" placeholder="Country Code">
+                      <datalist id="customerphonedatalistOptions">
+                          @foreach(getModelList('countries') as $country)
+                          <option value="{{$country->name}}" data-value="{{$country->id}}">
+                          @endforeach
+                      </datalist>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <label>Phone Number</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="material-icons">phone</i></div>
                         </div>
-                        <input type="text" name="phone" class="form-control" value="{{ __($customer->whatsappNumber() ?? 'None') }}" >
+                        <input type="text" name="phone" class="form-control" value="{{ __($customer->phone ?? 'None') }}" >
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label>Email</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -47,7 +62,7 @@
                         <input type="email" name="email" class="form-control" value="{{ __($customer->email ?? '') }}" >
                     </div>
                 </div>
-                <div class="col-md-3"> 
+                <div class="col-md-2"> 
                     <label>Address</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -187,4 +202,9 @@ $("#btn_delete").on("click", function(){
 });
 
 });
+
+function setCode(){
+    var value = $('#country').val();
+    $('#country_id').val($('#customerphonedatalistOptions [value="' + value + '"]').data('value'));
+}
 </script>

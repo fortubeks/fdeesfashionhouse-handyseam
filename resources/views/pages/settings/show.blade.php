@@ -216,7 +216,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <label class="col-sm-2 col-form-label">{{ __('Business Logo') }}</label>
+                  <label class="col-sm-2 col-form-label">{{ __('Business Logo (*png)') }}</label>
                   <div class="col-sm-7">
                   <?php $url =  asset('/storage/logo_images/'.$setting->business_logo); ?>
                       <img class="img-thumbnail" width="100px" style="margin-right: 20px;" src="{{ $url }}"/>

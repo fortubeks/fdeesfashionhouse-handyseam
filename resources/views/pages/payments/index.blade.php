@@ -65,7 +65,9 @@
                   @endforeach
                 </tbody>
               </table>
-                                     
+              @if($payments instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                <div class="justify-content-center">{{$payments->appends(request()->query())->links()}}</div>
+                @endif                      
                     
             </div>
           </div>

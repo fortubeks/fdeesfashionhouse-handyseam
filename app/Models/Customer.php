@@ -42,6 +42,12 @@ class Customer extends Model
         return $this->belongsTo('App\Models\Country','country_id');
     }
 
+    public function phoneCode(){
+        if($this->country){
+            return $this->country->name;
+        } 
+    }
+
     public static function getAll(){
         //get a list of all customers
         $customers = Customer::orderBy('created_at','desc')->

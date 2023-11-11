@@ -91,6 +91,9 @@
                   @endforeach
                 </tbody>
               </table> 
+              @if($items instanceof \Illuminate\Pagination\LengthAwarePaginator )
+                <div class="justify-content-center">{{$items->appends(request()->query())->links()}}</div>
+                @endif
             </div>
           </div>
         </div>

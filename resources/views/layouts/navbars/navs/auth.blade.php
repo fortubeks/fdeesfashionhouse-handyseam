@@ -2,6 +2,8 @@
 <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
   <div class="container-fluid">
     <div class="navbar-wrapper">
+      <?php $url =  asset('/storage/logo_images/'.auth()->user()->user_account->app_settings->business_logo); ?>
+      <a class="navbar-brand" href="{{url('/settings')}}"><img class="img-thumbnail" width="50px" src="{{ $url }}"/></a>
       <a class="navbar-brand" href="#">{{ $titlePage }}</a>
     </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">

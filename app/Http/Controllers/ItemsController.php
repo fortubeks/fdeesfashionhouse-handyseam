@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 class ItemsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -21,9 +17,9 @@ class ItemsController extends Controller
     public function index()
     {
         //get a list of all items in inventory
-        $items = Item::getAll();
-        $view = 'pages.items.index';
-        return view($view)->with('items',$items);
+        $items = Item::orderBy('description','desc')->
+        where('user_id','=', auth()->user()->user_account_id)->paginate(15);
+        return view('pages.items.index')->with('items',$items);
     }
     
     public function search(Request $request)

@@ -18,7 +18,7 @@
                             @csrf
                             <div class="card-body ">
                                 <div class="form-group bmd-form-group mb-4">
-                                    <label>Select Category (<a href="{{url('/items-categories')}}">Create New Category</a>)</label>
+                                    <label>Select Category (<a href="{{url('/item-categories')}}">Create New Category</a>)</label>
                                     <select class="form-select" name="category_id">
                                         @foreach (getModelList('item-categories') as $item_category)
                                         <option value="{{ __($item_category->id) }}">{{ __($item_category->name) }}</option>
@@ -50,10 +50,16 @@
                                     <label>Quantity in Stock</label>
                                     <input type="number" required name="qty" class="form-control" placeholder="Enter Quantity in Stock" value="0" aria-label="Quantity in Stock">
                                 </div> 
+                                
                                 <div class="form-contol mb-4">
                                     <label>Image</label>
+                                    @if(auth()->user()->isPremiumUser())
                                     <input type="file" name="image" class="form-control mb-4" placeholder="Image" >
+                                    @else
+                                    <input type="text" readonly class="form-control" placeholder="Image upload only for premium users">
+                                    @endif
                                 </div> 
+                                
                             </div>
                             <div class="card-footer ">
                                 <button type="submit" class="btn btn-primary">Create</button>  
