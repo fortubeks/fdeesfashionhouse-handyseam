@@ -8,23 +8,30 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CustomersController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $customers = Customer::orderBy('name','desc')->
         where('user_id','=', auth()->user()->user_account_id)->paginate(10);
+        if(isset($request->sort)){
+            $customers = Customer::withCount(['orders as total_order_amount' => function ($query) {
+                $query->select(DB::raw('sum(total_amount)'));
+            }])
+            ->orderByDesc('total_order_amount')
+            ->where('user_id', auth()->user()->user_account_id)
+            ->paginate(10)->appends([
+                'sort' => request('sort'),
+                ]);
+        }
         $view = 'pages.customers.index';
         return view($view)->with('customers',$customers);
     }

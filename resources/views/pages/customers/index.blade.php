@@ -61,8 +61,8 @@
                     <th style="width:10%">ID</th>
                     <th style="width:35%">Name</th>
                     <th style="width:30%">Phone</th>
-                    <th style="width:10%">Number of Orders</th>
-                    <th style="width:15%">Total Amount</th>
+                    <th style="width:10%">Orders</th>
+                    <th style="width:15%">Total Amount <a href="{{url('customers?sort=amount-desc')}}"><i class="fa fa-long-arrow-up"></i></a></th>
                 </thead>
                 <tbody>
                   @if(count($customers)<=0)
@@ -79,7 +79,7 @@
                   <td>
                     {{ __($customer->phone) }}
                   </td>
-                  <td style="text-align: center;">
+                  <td>
                     {{ __($customer->getTotalNumberOfOrders()) }}
                   </td>
                   <td>
