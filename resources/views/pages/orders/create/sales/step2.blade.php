@@ -92,6 +92,7 @@
                     @csrf
                     <input type="hidden" name="order_type" value="sales">
                     <input type="hidden" name="customer_id" value="{{ __($customer->id) }}">
+                    
                     <div id="cart">
                         <?php 
                         //$cart_items = [];
@@ -101,13 +102,21 @@
                             @foreach($cart_items ?? [] as $item)
                                 <p>{{ __($item->description ?? 'None') }}&nbsp;&nbsp;&nbsp;{{ __($item->price ?? 'None') }}<a data-id='{{ __($item->id) }}' data-price='{{ __($item->price) }}' onclick='removeFromCart(this)' class='item removeFromCart'><i class='material-icons'>clear</i></button></p>
                             @endforeach
-                            <label>Total Amount: NGN  {{ __(session('cart_total_amount')) }}</label>
+                            
                             
                             <input type="hidden" name="total_amount" value="{{ __(session('cart_total_amount')) }}">
-                            <p><button type="submit" class='btn btn-primary' type='button'>Create Order & Proceed To Payment</button></p>
+                            <p>
+                              <label>Total Amount: NGN  {{ __(session('cart_total_amount')) }}</label>
+                            </p>
+                            <p class="mt-3">
+                            <label class="bmd-label-floating">Date of Order</label>
+                            <input placeholder="Date of Order" onfocus="(this.type='date')" value="{{now()}}" name="created_at" type="text" class="form-control" required>
+                            
+                            </p>
+                            <p class="mt-2"><button type="submit" class='btn btn-primary' type='button'>Create Order & Proceed To Payment</button></p>
                             
                         @endif
-                        <input type="text" id="total_amount" value="{{ __(session('cart_total_amount') ?? 0) }}">
+                        
                     </div>
                     </form>
           </div>
