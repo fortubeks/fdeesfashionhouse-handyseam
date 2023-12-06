@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Date/Time Created</label>
-                                <input type="text" onfocus="(this.type='date')" name="created_at" style="width: 70%;" value="{{ (($order->created_at == '')) ? $order->created_at->format('d-m-Y') : $order->updated_at->format('d-m-Y') }}" >
+                                <input type="text" onfocus="(this.type='date')" name="created_at" style="width: 70%;" value="{{ ((!$order->created_at == '')) ? $order->created_at->format('d-m-Y') : $order->updated_at->format('d-m-Y') }}" >
                             </div>
                         </div>
                         <div class="form-row">  
