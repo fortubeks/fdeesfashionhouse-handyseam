@@ -79,6 +79,7 @@ class OrdersController extends Controller
         $order->save();
 
         $order->created_at = $request->created_at;
+        
         $order->save();
 
         if($request->order_type == 'tailoring'){
