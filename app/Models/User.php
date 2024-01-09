@@ -97,8 +97,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isPremiumUser(){
         $isExpired = true;
-        $last_subscription = auth()->user()->user_account->subscriptions->last();
-        if($last_subscription){
+        $user = auth()->user()->user_account;
+        $last_subscription = $user->subscriptions->last();
+        if($last_subscription && $last_subscription->package->name=="Silver"){
             $isExpired = Carbon::createFromTimestamp(strtotime($last_subscription->expires_at))->isPast();
         }
         
