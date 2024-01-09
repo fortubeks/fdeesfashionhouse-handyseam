@@ -54,12 +54,12 @@
                   </tr>
                   <tr>
                     <td>Staff & Tailors Management</td>
-                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
                     <td class="text-center"><i class="fa fa-check text-success"></i></td>
                   </tr>
                   <tr>
                     <td>Shop Expenses Management</td>
-                    <td class="text-center"><i class="fa fa-check text-success"></i></td>
+                    <td class="text-center"><i class="fa fa-times text-danger"></i></td>
                     <td class="text-center"><i class="fa fa-check text-success"></i></td>
                   </tr>
                   <tr>
@@ -85,7 +85,7 @@
                   <tr>
                     <td></td>
                     <td class="text-center">Free</td>
-                    <td class="text-center">Just $6 -/month</td>
+                    <td class="text-center">Just ₦2,500 -/month ($3)</td>
                   </tr>
                   <tr>
                     @if(!auth()->user()->user_account->isPremiumUser())
