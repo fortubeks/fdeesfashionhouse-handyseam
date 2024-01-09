@@ -88,6 +88,9 @@ class RegisterController extends Controller
             $this->createFreeSubscription($user);
             if($user->user_type == 'admin'){
                 $this->initializeUserSettings($user);
+
+                //send welcome mail to user with video link
+                
             }
         }
         return $user;

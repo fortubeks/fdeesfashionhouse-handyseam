@@ -70,6 +70,9 @@
             Below are vital informations you should be in sync with
         </p>
 
+        <h2>Demo & Overview</h2>
+        <p><a href="https://www.youtube.com/watch?v=OlwkXZ5_qYI&t=32s">Watch Software Demo Overview</a></p>
+
         <h2>Functions of the software</h2>
         <ul>
             <li>Save & access all your customer information including their measurements </li>
@@ -83,7 +86,7 @@
         <h2>Plans</h2>
         <ul>
             <li>Free: This plan is free and has all the functions except maketing and financial reporting</li>
-            <li>Premium: This plan costs NGN2,500 or $6 monthly and includes all the features of handyseam and future updates and features</li>
+            <li>Premium: This plan costs NGN2,500 or $3 monthly and includes all the features of handyseam and future updates and features</li>
         </ul>
 
         <p>Hit me up on +2348090839412 phone or whatsapp if you require any assistance using the software. Our email support is available 24/7 </p>

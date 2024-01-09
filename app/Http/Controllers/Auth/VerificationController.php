@@ -50,7 +50,7 @@ class VerificationController extends Controller
         
         Mail::to(auth()->user())->send(new WelcomeMail(auth()->user()));
 
-        return redirect('/home')->with('status','Welcome To The HandySeam. Best Fashion & Tailoring Business App in Africa');
+        return redirect('/home')->with('status','Welcome To The HandySeam. Best Fashion & Tailoring Business App in Africa & beyond');
     }
 
 }
