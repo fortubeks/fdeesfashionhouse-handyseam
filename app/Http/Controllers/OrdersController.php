@@ -62,8 +62,7 @@ class OrdersController extends Controller
         ]);
 
         $user_account_settings = auth()->user()->user_account->app_settings;
-
-        $vat = $user_account_settings->vat/100 * $request->total_amount;
+        $vat = ($user_account_settings->vat/100) * $request->total_amount;
         
         $order = new Order;
         $order->customer_id = $request->customer_id;

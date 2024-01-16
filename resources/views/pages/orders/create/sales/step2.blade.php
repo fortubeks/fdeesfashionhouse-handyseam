@@ -102,9 +102,6 @@
                             @foreach($cart_items ?? [] as $item)
                                 <p>{{ __($item->description ?? 'None') }}&nbsp;&nbsp;&nbsp;{{ __($item->price ?? 'None') }}<a data-id='{{ __($item->id) }}' data-price='{{ __($item->price) }}' onclick='removeFromCart(this)' class='item removeFromCart'><i class='material-icons'>clear</i></button></p>
                             @endforeach
-                            
-                            
-                            <input type="hidden" name="total_amount" value="{{ __(session('cart_total_amount')) }}">
                             <p>
                               <label>Total Amount: NGN  {{ __(session('cart_total_amount')) }}</label>
                             </p>
@@ -116,7 +113,7 @@
                             <p class="mt-2"><button type="submit" class='btn btn-primary' type='button'>Create Order & Proceed To Payment</button></p>
                             
                         @endif
-                        
+                        <input type="hidden" id="total_amount" name="total_amount" value="{{ __(session('cart_total_amount')) }}">
                     </div>
                     </form>
           </div>
