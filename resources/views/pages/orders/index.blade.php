@@ -66,7 +66,11 @@
                   @foreach($orders ?? [] as $order)
                   <tr class="item" data-id="{{__($order->id)}}">
                   <td>
+                  @if($order->created_at)
                   {{ __( $order->created_at->format('d-M-y h:i:s') ?? 'None') }}
+                  @else
+                  {{ __( $order->updated_at->format('d-M-y h:i:s') ?? 'None') }}
+                  @endif
                   </td>
                   <td>
                       {{ __($order->customer->name) }}
