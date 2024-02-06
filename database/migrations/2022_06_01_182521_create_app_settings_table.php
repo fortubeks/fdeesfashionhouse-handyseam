@@ -26,6 +26,8 @@ class CreateAppSettingsTable extends Migration
             $table->string('business_phone')->nullable();
             $table->string('business_payment_advice')->nullable();
             $table->string('business_logo')->nullable();
+            $table->string('business_currency')->nullable();
+            $table->double('vat')->nullable();
             $table->string('sms_api_username')->nullable();
             $table->string('sms_api_key')->nullable();
             $table->string('sms_sender')->nullable();
