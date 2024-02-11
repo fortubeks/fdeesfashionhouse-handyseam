@@ -8,7 +8,9 @@
         <div class="card card-plain">
           <div class="card-header card-header-primary">
             <h4 class="card-title mt-0">{{ __('Measurement Details For '.$customer->name ) }}</h4>
-            <p class="card-category"> </p>
+            <p class="card-category"> 
+            <a href="{{url('/measurement/printpdf/'.$customer->id)}}" type="button" class="btn btn-sm ">Print</a>
+            </p>
           </div>
           <div class="card-body">
             <div class="">

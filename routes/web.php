@@ -90,8 +90,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/payments/printPDFReceipt/{invoice_id}', [App\Http\Controllers\InvoicesController::class, 'printReceipt']);
 	Route::get('/payments-search', [App\Http\Controllers\PaymentsController::class, 'search']);
 
-	Route::get('/measurement/print/{measurement_id}', [App\Http\Controllers\MeasurementsController::class, 'printMeasurement']);
+	Route::get('/measurement/print/{customer_id}', [App\Http\Controllers\MeasurementsController::class, 'printMeasurement']);
 	Route::get('/printMeasurementInst/{outfit_id}', [App\Http\Controllers\PrintController::class, 'printMeasurementAndInstruction']);
+	Route::get('/measurement/printpdf/{customer_id}', [App\Http\Controllers\PrintController::class, 'printMeasurementPdf']);
 
 	Route::get('/changePassword', [App\Http\Controllers\HomeController::class, 'showChangePasswordForm']);
 	Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'ChangePassword'])->name('changePassword');
