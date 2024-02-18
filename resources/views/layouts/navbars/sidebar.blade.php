@@ -7,7 +7,7 @@
   <div class="logo">
     <a href="{{ url('/') }}" class="simple-text logo-normal">
       
-      <img style="" src="{{ asset('material') }}/img/logo/handyseam_logo.png">
+      <img  src="{{ asset('/storage/logo_images/'.auth()->user()->user_account->app_settings->business_logo) }}">
     </a>
   </div>
   <div class="sidebar-wrapper">
