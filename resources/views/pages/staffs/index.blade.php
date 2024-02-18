@@ -61,8 +61,7 @@
                   @endforeach
                 </tbody>
               </table>
-                                     
-                    
+              <div class="justify-content-center">{{$staffs->links()}}</div>
             </div>
           </div>
         </div>

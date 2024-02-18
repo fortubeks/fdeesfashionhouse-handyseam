@@ -153,6 +153,23 @@
                         <textarea name="instructions" rows="2" class="form-control" >{{ __($order->instructions ?? 'None') }}</textarea>    
                     </div>
                 </div>
+                <div class="row mb-3">  
+                    <div class="col-md-12">
+                    <label for="" class="">Style Chosen</label>
+                    <textarea style="margin-bottom:5px;" name="order_style" rows="2" class="form-control" >{{ __($order->order_style ?? 'None') }}</textarea> 
+                    
+                    </div>
+                    <div class="col-md-12">
+                    <ul class="list-group">
+                    @foreach($order->ListofOrderStyleImagesWithFileUrl() as $style_image)
+                    <li style="margin-bottom: 5px;" class="list-group-item list-group-item-success">
+                        <?php $url = asset('storage/app/'.$style_image[1]); ?>
+                    <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;"><img width="200px" style="margin-right: 20px;" src="{{ $url }}"/> {{$style_image[0]}}</a>
+                    </li>
+                    @endforeach
+                    </ul>
+                    </div>
+                </div>
                 @foreach($order->outfits as $outfit)
                 <div class="row img-thumbnail mb-3" style="padding:20px;">
                     <div class="col-md-8 vertical-align">
