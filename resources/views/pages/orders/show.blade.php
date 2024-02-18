@@ -163,7 +163,7 @@
                     <ul class="list-group">
                     @foreach($order->ListofOrderStyleImagesWithFileUrl() as $style_image)
                     <li style="margin-bottom: 5px;" class="list-group-item list-group-item-success">
-                        <?php $url = asset('storage/app/'.$style_image[1]); ?>
+                        <?php $url = asset('storage/'.$style_image[1]); ?>
                     <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;"><img width="200px" style="margin-right: 20px;" src="{{ $url }}"/> {{$style_image[0]}}</a>
                     </li>
                     @endforeach
