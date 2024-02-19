@@ -116,9 +116,9 @@ class OrdersController extends Controller
         //send sms
         if($request->order_type == 'tailoring'){
             $customer = Customer::findOrFail($request->customer_id);
-            $api_key = $user_account_settings->sms_api_key;
-            $username = $user_account_settings->sms_api_username;
-            $sender = $user_account_settings->sms_sender;
+            $api_key = '11e3d1a178ba2f696fdb0af91722531150651c3e';
+            $username = 'fdeesfashionhouse@gmail.com';
+            $sender = 'Fdees';
 			$business_name = $user_account_settings->business_name;
             $msg = 'Thank you for your order. Your expected fitting date is '. $order->expected_delivery_date .'. Thank you for choosing '.$business_name;
             $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
@@ -126,12 +126,12 @@ class OrdersController extends Controller
             if ($order->order_type == "tailoring"){
                 //$customer->notify(new OrderProcessed($order));
                 // if(auth()->user()->user_account->isPremiumUser()){
-                //     sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
+                //     //sendwhatsappnotification("new_order",$customer->whatsappNumber(),"new_order_1",$order->expected_delivery_date,$order->id);
                 //     if($user_account_settings->business_currency == "NGN"){
                 //         $sms_response = Http::get($request_url);
                 //     }
                 // }
-                
+                $sms_response = Http::get($request_url);
             }
         }
 
