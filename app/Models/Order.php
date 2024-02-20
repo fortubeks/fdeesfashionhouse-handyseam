@@ -49,7 +49,7 @@ class Order extends Model
     }
     public function getOrdersDueThisWeek()
     {
-        $orders = Order::orderBy('expected_delivery_date','asc')
+        $orders = Order::orderBy('expected_delivery_date','desc')
         ->where('status','!=','Completed')
         ->where('user_id','=', auth()->user()->user_account_id)->paginate(20);
         return $orders;
