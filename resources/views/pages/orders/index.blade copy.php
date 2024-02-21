@@ -9,32 +9,41 @@
           <div class="card-header">
             <div class="row">
               <div class="col-md-2">
-              <a href="{{ url('orders/create') }}" class="btn btn-primary" >Add New Order</a>
+                <h4 class="card-title mt-0"> Total: {{formatCurrency($orders_sum)}} ({{$orders_count}})</h4>
               </div>
               <div class="col-md-2"> 
-                
+                <a href="{{ url('orders/create') }}" class="btn btn-primary" >Add New Order</a>
               </div>
               <div class="col-md-8">
-                <form action="{{ url('/customers-search') }}" method="get">
+                <form method="get" action="{{ url('filter-orders') }}">
                   <div class="row">
-                    <div class="col-md-6">
-                      <div class="input-group">
+                    <div class="col-md-3">
+                      <select class="form-select" name="search_by">
+                        <option selected value="">Filter By</option>
+                        <option @if(isset($search_by)) {{(( $search_by == 'Completed')) ? 'selected' : '' }} @endif value="Completed">Completed</option>
+                        <option @if(isset($search_by)) {{(( $search_by == 'Processing')) ? 'selected' : '' }} @endif value="Processing">Processing</option>
+                        <option @if(isset($search_by)) {{(( $search_by == 'Pending Payment')) ? 'selected' : '' }} @endif value="Pending Payment">Pending payment</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                          <div class="input-group-text"><i class="material-icons">face</i></div>
+                          <span class="input-group-text" id="basic-addon1">FITTING DATE  FROM</span>
                         </div>
-                        <input type="text" name="search_value" class="form-control" placeholder="Enter customer name or phone number to search for customer" >
+                        <input name="from_filter" class="form-control" @if(isset($from)) value="{{$from}}" @else value="{{date('Y-m-d')}}" @endif type="date" required>
                       </div>
                     </div>
                     <div class="col-md-3">
-
-                      <select class="form-select" name="search_by" aria-label=".form-select-sm example">
-                        <option selected value="name">Search By Name</option>
-                        <option value="phone">Search By Phone</option>
-                      </select>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1">TO</span>
+                        </div>
+                        <input name="to_filter" class="form-control" @if(isset($to)) value="{{$to}}" @else value="{{date('Y-m-d')}}" @endif type="date" required>
+                      </div>
                     </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-primary" type="sumbit" id="">Search</button>
-                    </div>  
+                    <div class="col-md-2">
+                      <button class="btn btn-primary" type="submit">Filter</button>
+                    </div>
                   </div>
                 </form>
               </div>
