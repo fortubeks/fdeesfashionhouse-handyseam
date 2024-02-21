@@ -32,7 +32,7 @@ class HomeController extends Controller
         $orders_recent = $orders->getRecentOrders();
         if(auth()->user()->user_type == "admin"){
             //$settings = AppSetting::where('user_id',Auth::user()->id);
-            if (auth()->user()->app_settings->business_name == '') {  
+            if (auth()->user()->user_account->app_settings->business_name == '') {  
                 return view('pages.settings.setup.business-info')->with('setting',auth()->user()->app_settings);
               }
             

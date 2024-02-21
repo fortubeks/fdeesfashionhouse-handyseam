@@ -107,17 +107,19 @@ class MeasurementsController extends Controller
         // //     "waist_to_hip":"Waist To Hip","shoulder_to_hip":"Shoulder To Hip","empire_length":"Empire Length",
         // //     "empire_width":"Empire Width","around_chest":"Around Chest","upper_arm":"Upper Arm"}
         if($customer->measurement_details == null){
-            $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
-            // Fetch corresponding data from the database using Eloquent
-            $data = $customer->measurement;
-
-            // Update the value in the array with the database value
-            if ($data) {
-                foreach ($array as $key => &$item) {
-                    $array[$key] = $data->$key;
-                }
+            
+            }
+        $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
+        // Fetch corresponding data from the database using Eloquent
+        $data = $customer->measurement;
+        //dd($array);
+        // Update the value in the array with the database value
+        if ($data) {
+            foreach ($array as $key => $item) {
+                $array[$key] = $data->$key;
             }
         // Encode the updated array back to a JSON string
+        
         $updatedJsonString = json_encode($array);
         $customer->measurement_details = $updatedJsonString;
         $customer->save();
