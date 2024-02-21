@@ -15,7 +15,7 @@
                 
               </div>
               <div class="col-md-8">
-                <form action="{{ url('/customers-search') }}" method="get">
+                <form action="{{ url('/orders-search-by-customer') }}" method="get">
                   <div class="row">
                     <div class="col-md-6">
                       <div class="input-group">

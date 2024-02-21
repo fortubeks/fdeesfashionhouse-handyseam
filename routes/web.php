@@ -82,6 +82,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/create-order/sales/step3', [App\Http\Controllers\PagesController::class, 'createsalesorderstep3']);
 	Route::get('/orders/addToCart/{item_id}', [App\Http\Controllers\OrdersController::class, 'addItemToCart']);
 	Route::get('/orders/removeFromCart/{item_id}', [App\Http\Controllers\OrdersController::class, 'removeItemFromCart']);
+	Route::get('/orders-search-by-customer', [App\Http\Controllers\OrdersController::class, 'searchByCustomerName']);
 
 	Route::get('/payments/create-by-invoice', [App\Http\Controllers\PagesController::class, 'createPaymentForInvoice']);
 	Route::get('/payments/printInvoice/{invoice_id}', [App\Http\Controllers\InvoicesController::class, 'printInvoice1']);

@@ -425,4 +425,20 @@ class OrdersController extends Controller
         return redirect('orders/'.$item_used->outfit->order->id)->with('status', 'Added Successfully');
     }
 
+    public function searchByCustomerName(Request $request){
+        $customers = Customer::where('name', 'like', '%'."{$request->search_value}".'%')
+            ->where('user_id','=', auth()->user()->user_account_id)
+            ->get();
+        $orders = [];
+        foreach ($customers as $customer){
+            if($customer->orders->count() > 0){
+                foreach($customer->orders as $order){
+                    $orders[] = $order;
+                }
+            }
+        }
+        //dd($orders);
+        return view('pages.orders.index')->with('orders',$orders);
+    }
+
 }
