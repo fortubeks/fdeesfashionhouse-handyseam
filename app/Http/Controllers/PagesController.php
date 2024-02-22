@@ -19,7 +19,7 @@ class PagesController extends Controller
     public function createtailoringorderstep2($customer_id){
         session(['customer_id' => $customer_id]);
         $customer = Customer::findOrFail($customer_id);
-        
+        $customer->setMeasurement();
         $view = 'pages.orders.create.tailoring.step2';
         return view($view)->with('customer', $customer);
     }

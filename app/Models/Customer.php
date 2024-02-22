@@ -97,4 +97,22 @@ class Customer extends Model
         //if customer not have country code, use user currency to get counrty and code
 
     }
+
+    public function setMeasurement(){
+        $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
+        // Fetch corresponding data from the database using Eloquent
+        $data = $this->measurement;
+        //dd($array);
+        // Update the value in the array with the database value
+        if ($data) {
+            foreach ($array as $key => $item) {
+                $array[$key] = $data->$key;
+            }
+        // Encode the updated array back to a JSON string
+        
+        $updatedJsonString = json_encode($array);
+        $this->measurement_details = $updatedJsonString;
+        $this->save();
+        }
+    }
 }
