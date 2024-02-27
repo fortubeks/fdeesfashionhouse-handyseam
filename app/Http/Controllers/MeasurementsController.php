@@ -93,37 +93,24 @@ class MeasurementsController extends Controller
     public function show($id)
     {
         $customer = Customer::findOrFail($id);
-        //if admin has not set measurement, take customer to set measurement
-        //set origin to create order if it was from create order origin
-        // if(auth()->user()->app_settings->measurement_set == 0){
-        //     //redirect to settings page
-        //     return view('pages.settings.setup.measurements')->with('status','Please setup your measurement parameters first');
-        // }
-        // if
-        // // {"bust":"Bust","waist_1":"Waist 1","waist_2":"Waist 2","hips":"Hips","shoulder_length":"Shoulder Length",
-        // //     "chest_width":"Chest Width","arm_hole":"Arm Hole","front_bodice":"Front Bodice","back_width":"Back Width",
-        // //     "front_length":"Front Length","sleeve_length":"Sleeve Length","back_bodice":"Back Bodice","side_dart":"Side Dart",
-        // //     "front_skirt_length":"Front Skirt Length","full_length":"Full Length","around_knee":"Around Knee",
-        // //     "waist_to_hip":"Waist To Hip","shoulder_to_hip":"Shoulder To Hip","empire_length":"Empire Length",
-        // //     "empire_width":"Empire Width","around_chest":"Around Chest","upper_arm":"Upper Arm"}
-        if($customer->measurement_details == null){
-            
-            }
-        $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
-        // Fetch corresponding data from the database using Eloquent
-        $data = $customer->measurement;
-        //dd($array);
-        // Update the value in the array with the database value
-        if ($data) {
-            foreach ($array as $key => $item) {
-                $array[$key] = $data->$key;
-            }
-        // Encode the updated array back to a JSON string
         
-        $updatedJsonString = json_encode($array);
-        $customer->measurement_details = $updatedJsonString;
-        $customer->save();
+        if($customer->measurement_details == null){
+            $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
+            // Fetch corresponding data from the database using Eloquent
+            $data = $customer->measurement;
+            // Update the value in the array with the database value
+            if ($data) {
+                foreach ($array as $key => $item) {
+                    $array[$key] = $data->$key;
+                }
+            // Encode the updated array back to a JSON string
+            
+            $updatedJsonString = json_encode($array);
+            $customer->measurement_details = $updatedJsonString;
+            $customer->save();
+            }
         }
+        
         $view = 'pages.measurements.show';
         return view($view)->with('customer',$customer);
     }

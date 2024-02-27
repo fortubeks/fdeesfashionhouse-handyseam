@@ -42,13 +42,14 @@
           </ul>
         </div>
       </li>
-      @if(auth()->user()->user_type != 'tailor')
       <li class="nav-item{{ $activePage == 'customers' ? ' active' : '' }}">
         <a class="nav-link" href="{{ url('customers') }}">
           <i class="material-icons">groups</i>
             <p>{{ __('Customers') }}</p>
         </a>
       </li>
+      @if(auth()->user()->user_type != 'tailor')
+      
       <li class="nav-item{{ $activePage == 'items' ? ' active' : '' }}">
         <a class="nav-link" href="{{ url('items') }}">
           <i class="material-icons">inventory</i>

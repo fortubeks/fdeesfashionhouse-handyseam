@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 function formatCurrency($amount){
     $user = User::find(auth()->user()->user_account_id);
     $business_currency = $user->app_settings->business_currency ?: "NGN";
-    
+    return 'NGN '.number_format($amount,2,".",",");
     if($business_currency == 'GHS'){
         return 'GHc '.number_format($amount,2,".",",");
     }

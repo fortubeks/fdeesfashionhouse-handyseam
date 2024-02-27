@@ -16,9 +16,10 @@
                 @csrf
                 <input type="hidden" name="_method" value="DELETE">
             </form>
+            <a class="btn btn-sm btn-primary" href="{{ url('measurements/'.$order->customer->id) }}">View Measurement</a>
             @if(auth()->user()->user_type != 'tailor')
-            <button type="button" data-invoice-id="{{__($order->id ?? '') }}" id="btn_print_invoice" class="btn btn-sm btn-primary">Print Thermal Receipt</button>
-            <button type="button" data-invoice-id="{{__($order->invoice->id ?? '') }}" id="btn_print_pdf_receipt" class="btn btn-sm btn-primary">Print PDF Receipt</button>
+            <button type="button" data-invoice-id="{{__($order->id ?? '') }}" id="btn_print_invoice" class="btn btn-sm btn-primary d-none">Print Thermal Receipt</button>
+            <button type="button" data-invoice-id="{{__($order->invoice->id ?? '') }}" id="btn_print_pdf_receipt" class="btn btn-sm btn-primary d-none">Print PDF Receipt</button>
             <button type="button" data-invoice-id="{{__($order->invoice->id ?? '') }}" id="btn_print_pdf_invoice" class="btn btn-sm btn-primary">Print PDF Invoice</button>
             <button id="btn_delete" class="btn btn-sm btn-secondary">Delete Order</button>
             @endif
@@ -36,7 +37,7 @@
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Customer Name</label> 
-                                <p><a class="btn btn-secondary" href="{{ url('customers/'.$order->customer->id) }}">{{ __($order->customer->name ?? 'None') }}</a> </p>
+                                <p><a class="btn btn-primary" href="{{ url('customers/'.$order->customer->id) }}">{{ __($order->customer->name ?? 'None') }}</a> </p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="" class="">Date/Time Created</label>

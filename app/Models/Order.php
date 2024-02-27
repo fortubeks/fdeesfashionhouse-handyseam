@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Auth;
+use Carbon\Carbon;
 
 class Order extends Model
 {
@@ -49,10 +50,17 @@ class Order extends Model
     }
     public function getOrdersDueThisWeek()
     {
-        $orders = Order::orderBy('expected_delivery_date','desc')
-        ->where('status','!=','Completed')
-        ->where('user_id','=', auth()->user()->user_account_id)->paginate(20);
+        $date_today = Carbon::today();
+        $from = $date_today->toDateTimeString();
+		$from_ = $date_today;
+        $from_ = date_add($from_,date_interval_create_from_date_string("7 days"));
+        $to = date_format($from_,"Y-m-d");
+        $orders = Order::whereBetween('expected_delivery_date', [$from, $to])->paginate(30);
         return $orders;
+        // $orders = Order::orderBy('expected_delivery_date','desc')
+        // ->where('status','!=','Completed')
+        // ->where('user_id','=', auth()->user()->user_account_id)->paginate(20);
+        // return $orders;
     }
     public function getRecentOrders()
     {
