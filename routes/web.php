@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/filter-expenses', [App\Http\Controllers\ExpensesController::class, 'filter']);
 	Route::get('/expenses-search', [App\Http\Controllers\ExpensesController::class, 'search']);
 
+	Route::post('/delete-outfit', [App\Http\Controllers\OrdersController::class, 'deleteOutfit']);
+
 	Route::get('/filter-orders', [App\Http\Controllers\OrdersController::class, 'filter']);
 	//Route::post('/add-items-used', [App\Http\Controllers\OrdersController::class, 'addItemsUsed']);
 

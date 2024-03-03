@@ -296,8 +296,12 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-4">
+                            <div class="d-none col-4">
                             <button type="button" data-outfit-id="{{__($outfit->id ?? '') }}" id="btn_print_outfit_inst" class="btn btn-sm btn-primary btn_print_m_ins">Print Measurement & Instruction</button>
+                            </div>
+                            <div class="col-4">
+                                
+                                <button class="btn btn-sm btn-primary btn_delete_outfit" data-outfit-id="{{__($outfit->id ?? '') }}" type="button">Delete Outfit</button>
                             </div>
                         </div>
                         
@@ -340,6 +344,7 @@
                         </div>
                     </div>
                 </div>
+                
                 @endif
                 @else
                 <div class="table-responsive">
@@ -447,6 +452,10 @@
         </div>
     </div>
 </div>
+<form id="delete_outfit_form" onsubmit="return confirm('Are you sure you want to delete this outfit?');" style="display: inline;float: right;margin-bottom: 0px;" action="{{ url('delete-outfit/') }}" method="post">
+    @csrf
+<input type="hidden" name="outfit_id" id="delete_outfit_id">    
+</form>
 <style>
 .form-control {
     font-size: 1.063rem !important;
@@ -507,14 +516,19 @@ $("#btn_delete").on("click", function(){
     $('#delete_form').submit();
 
 });
+$(".btn_delete_outfit").on("click", function(){
+    var id = $(this).attr("data-outfit-id");
+    $('#delete_outfit_id').val(id);
+    $('#delete_outfit_form').submit();
 
+});
 var status = $('#status').attr("data-status");
 $('#status option[value="'+status+'"]').attr('selected','selected');
 
 $(".job-status").each(function(){
     var job_status = $(this).attr("data-status");
     $(this).find('option').each(function() {
-      console.log(job_status + 'hhh' + $(this).val());
+      //console.log(job_status + 'hhh' + $(this).val());
       if($(this).text() == job_status){
             $(this).attr('selected','selected');
         }

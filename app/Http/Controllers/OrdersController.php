@@ -131,7 +131,7 @@ class OrdersController extends Controller
                 //         $sms_response = Http::get($request_url);
                 //     }
                 // }
-                $sms_response = Http::get($request_url);
+                //$sms_response = Http::get($request_url);
             }
         }
 
@@ -439,6 +439,17 @@ class OrdersController extends Controller
         }
         //dd($orders);
         return view('pages.orders.index')->with('orders',$orders);
+    }
+
+    public function deleteOutfit(Request $request)
+    {
+        $outfit = OutfitsOrders::find($request->outfit_id);
+        $order_id = $outfit->order_id;
+        $order = $outfit->order;
+        $order->total_amount -= $outfit->price;
+        $order->save();
+        $outfit->delete();
+        return redirect('orders/'.$order_id)->with('status', 'Outfit was deleted successfully');
     }
 
 }
