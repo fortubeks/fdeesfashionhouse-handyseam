@@ -17,7 +17,7 @@
             <div class="col-md-3">
             </div>
             <div class="col-md-3">
-              <a href="{{ url('weekly-outfit-payments/') }}" class="btn btn-secondary btn-block">Tailor Payments</a>
+              <a href="{{ url('weekly-outfit-payments/') }}" class="btn btn-primary btn-block">Tailor Payments</a>
             </div>
             <div class="col-md-2">
               <a href="{{ url('expense-categories/') }}" class="btn btn-link btn-block">Manage Categories</a>

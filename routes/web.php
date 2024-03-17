@@ -105,6 +105,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/weekly-outfit-payments', [App\Http\Controllers\ExpensesController::class, 'weeklyOutfitPaymentsIndex']);
 	Route::get('/tailor-payment-date-update', [App\Http\Controllers\ExpensesController::class, 'updateTailorPaymentDate']);
 	Route::get('/outfit-payments-search', [App\Http\Controllers\ExpensesController::class, 'getWeeklyOutfitsPayments']);
+	Route::get('/outfit-payments-customer-search', [App\Http\Controllers\ExpensesController::class, 'getCustomerOrders']);
 	Route::get('/resend-verification-email', [App\Http\Controllers\CustomersController::class, 'resendVerificationEmail']);
 	Route::get('/filter-expenses', [App\Http\Controllers\ExpensesController::class, 'filter']);
 	Route::get('/expenses-search', [App\Http\Controllers\ExpensesController::class, 'search']);

@@ -131,7 +131,9 @@ class OrdersController extends Controller
                 //         $sms_response = Http::get($request_url);
                 //     }
                 // }
-                $sms_response = Http::get($request_url);
+                if(env('APP_DEBUG') == false){
+                    $sms_response = Http::get($request_url);
+                }
             }
         }
 

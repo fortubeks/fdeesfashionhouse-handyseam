@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -172,6 +173,48 @@ class ExpensesController extends Controller
                     $record->payment_date = $outfit->payment_date;
                     array_push($tailor_payments_by_outfits_made_weekly, $record);
                 }
+            }
+        }
+       
+        return view('pages.expenses.outfit-payments')->with('tailor_payments_by_outfits_made_weekly', $tailor_payments_by_outfits_made_weekly);
+    }
+
+    public function getCustomerOrders(Request $request)
+    {
+        //validate customer entry, store and set view to list of customers
+        $validatedData = $request->validate([
+            'name' => ['required'],
+        ]);
+        
+        //return all the orders by the customer
+        // $orders = auth()->user()->user_account->orders()->whereBetween('expected_delivery_date',[$begining_date,$end_date])
+        // ->orderBy('created_at','desc')->get();
+
+        $customers = Customer::where('name', 'like', '%'."{$request->name}".'%')
+            ->where('user_id','=', auth()->user()->user_account_id)
+            ->get();
+        $orders = [];
+        foreach ($customers as $customer){
+            if($customer->orders->count() > 0){
+                foreach($customer->orders as $order){
+                    $orders[] = $order;
+                }
+            }
+        }
+        //dd($orders);
+        $tailor_payments_by_outfits_made_weekly = [];
+        foreach($orders as $order){
+            foreach($order->outfits as $outfit){
+                $record = (object)[];
+                $record->outfit_id = $outfit->id;
+                $record->tailor = $outfit->tailor ? $outfit->tailor->getFullName() : "No tailor assigned";
+                $record->customer = $outfit->order->customer->name;
+                $record->style = $outfit->name;
+                $record->fitting_date = $outfit->order->expected_delivery_date;
+                $record->status = $outfit->order->status;
+                $record->amount = $outfit->tailor_cost;
+                $record->payment_date = $outfit->payment_date;
+                array_push($tailor_payments_by_outfits_made_weekly, $record);
             }
         }
        

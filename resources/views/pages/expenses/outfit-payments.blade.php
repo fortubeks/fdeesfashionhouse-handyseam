@@ -5,18 +5,18 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-2 mb-3"> 
-         <label>Select Week Ending</label>
+         <label>Search Customer</label>
       </div>
         
       <div class="col-md-8 mb-3">
-        <form action="{{ url('/outfit-payments-search') }}" method="get">
+        <form action="{{ url('/outfit-payments-customer-search') }}" method="get">
           <div class="row">
             <div class="col-md-6">
-                <input class="form-control" name="week_ending" type="week" >
+                <input class="form-control" name="name" type="text" >
             </div>
             
-            <div class="col-md-4">
-              <button class="btn btn-primary btn-block bottom-left" type="submit" id="">Filter</button>
+            <div class="col-md-3">
+              <button class="btn btn-primary btn-block bottom-left" type="submit" id="">Search</button>
             </div>  
           </div>
         </form>
