@@ -253,7 +253,7 @@
                                 <textarea rows="1" class="form-control" name="instruction[]">{{$outfit->instruction}}</textarea>
                             </div>
                         </div>
-
+                        @if(auth()->user()->user_type != 'tailor')
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="form-control">Items Used</label>
@@ -280,6 +280,7 @@
                                 <input type="number" step=".001" min="0" value="{{ __($outfit->material_cost ?? '') }}" placeholder="" name="material_cost[]" class="form-control">
                             </div>
                         </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="" class="form-control">Status: </label>
