@@ -202,11 +202,12 @@ class OrdersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {   
+    {   //dd($request->all());
         $order = Order::find($id);
         
         $order->status = $request->status;
         $order->created_at = $request->created_at;
+        $total_amount = 0;
         if($request->order_type == 'tailoring'){
             $order->expected_delivery_date = $request->expected_delivery_date;
             $order->instructions = $request->instructions;
@@ -261,10 +262,11 @@ class OrdersController extends Controller
                         }
                         
                     }
-                    $amount = $outfit_order->qty * $outfit_order->price;
-                    $order->total_amount += $amount;
-                    $outfit_order->save();
+                    $total_amount += $request->price[$key] * $qty;
+                    
                 }
+                $order->total_amount = $total_amount;
+                $outfit_order->save();
 			}
         }
         
