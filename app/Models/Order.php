@@ -28,6 +28,9 @@ class Order extends Model
     {
         return $this->hasMany('App\Models\OutfitsOrders');
     }
+    public function images(){
+        return $this->hasMany('App\Models\OrderImage');
+    }
     public function ListofOrderStyleImagesWithFileUrl(){
         $list = array();
         $style_images = explode(',',$this->order_style_images);

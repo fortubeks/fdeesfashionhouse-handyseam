@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\ItemsUsed;
+use App\Models\OrderImage;
 use App\Models\OrderItem;
 use App\Models\Outfit;
 use App\Models\Payment;
@@ -258,6 +259,30 @@ class OrdersController extends Controller
                                     FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
                                     $outfit_order->image = $newfilename;
                                 }
+                            }
+                        }
+                        
+                    }
+                    if($request->file('additional_image')){
+                        $allowedfileExtension=['pdf','jpg','png','jpeg'];
+                        foreach ($request->file('additional_image') as $_key_ => $file){
+                            if ($request->additional_image[$_key_] === null) {
+                                continue;
+                            }
+                            $filename = $file->getClientOriginalName();
+                            $extension = $file->getClientOriginalExtension();
+                            $check=in_array($extension,$allowedfileExtension);
+                            
+                            if($check)
+                            {              
+                                $newfilename = time().rand(111, 9999).".". $extension;
+                                FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
+                                //new order image
+                                $order_image = OrderImage::create([
+                                    'order_id' => $order->id,
+                                    'location' => $newfilename,
+                                    'description' => $request->additional_image_text[$_key_]
+                                ]);
                             }
                         }
                         

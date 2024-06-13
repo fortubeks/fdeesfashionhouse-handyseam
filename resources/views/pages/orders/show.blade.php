@@ -161,16 +161,48 @@
                     
                     </div>
                     <div class="col-md-12">
-                    <ul class="list-group">
-                    @foreach($order->ListofOrderStyleImagesWithFileUrl() as $style_image)
-                    <li style="margin-bottom: 5px;" class="list-group-item list-group-item-success">
-                        <?php $url = asset('storage/'.$style_image[1]); ?>
-                    <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;"><img width="200px" style="margin-right: 20px;" src="{{ $url }}"/> {{$style_image[0]}}</a>
-                    </li>
-                    @endforeach
-                    </ul>
+                        <ul class="list-group">
+                        @foreach($order->ListofOrderStyleImagesWithFileUrl() as $style_image)
+                        <li style="margin-bottom: 5px;" class="list-group-item list-group-item-success">
+                            <?php $url = asset('storage/'.$style_image[1]); ?>
+                        <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;"><img width="200px" style="margin-right: 20px;" src="{{ $url }}"/> {{$style_image[0]}}</a>
+                        </li>
+                        @endforeach
+                        </ul>
+                    </div>
+                    <div class="col-md-12">
+                        
+                        @forelse($order->images as $image)
+                        <?php $url =  asset('/storage/styles/'.$image->location); ?>
+                        <p><a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;">
+                        <img class="img-thumbnail" width="200px" style="margin-right: 20px;" src="{{ $url }}"/>{{$image->description}} </a></p>
+                        @empty
+                        @endforelse
+
+                    </div>
+                    <div id="input-container" class="col-md-12"></div>
+                    <div class="col-md-12"><button type="button" class="btn btn-sm btn-primary" id="add-input">add image</button></div>
+                    
+                    <div class="d-none">
+                        <div class="col-md-12">
+                            <table id="input-template" class="table">
+                                <tbody class="mb-3">
+                                    <tr>
+                                        <td>
+                                            <div class="" style="margin-top:10px;border:1px solid grey;padding:15px;">
+                                                <p><input id="additional_image_text_0" placeholder="Instruction (optional)" type="text" name="additional_image_text[]" class="form-control"></p>
+                                            
+                                                <p><input id="additional_image_0" type="file" name="additional_image[]" class="form-control">
+                                            </div>
+                                        </td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                
                 @foreach($order->outfits as $outfit)
                 <div class="row img-thumbnail mb-3" style="padding:20px;">
                     <div class="col-md-8 vertical-align">
@@ -238,7 +270,7 @@
 
                         <div class="row">
                             <div class="col-md-4">
-                                <label class="form-control">Image</label>
+                                <label class="form-control">Images</label>
                             </div>
                             <div class="col-md-8">
                             <input type="file" name="styles[]" class="form-control mb-2">
@@ -314,6 +346,7 @@
                                 <?php $url =  asset('/storage/styles/'.$outfit->image); ?>
                                 <a href="{{ $url }}" target="_blank" onclick="window.open('{{ $url }}', 'popup'); return false;">
                                 <img class="img-thumbnail" width="200px" style="margin-right: 20px;" src="{{ $url }}"/> </a>
+
                             </div>
                             <div class="col-md-12">
                                 <p><label class="form-control">Items Used ({{formatCurrency($outfit->items_used()->sum('amount'))}})</label></p>
@@ -588,3 +621,31 @@ window.addEventListener('load', function() {
       });
 });
 </script>
+<script>
+    let inputCounter = 0;
+        window.addEventListener('load', function() {
+            $("#add-input").click(function() {
+                inputCounter++;
+
+                // Clone the input template
+                var newInput = $("#input-template").clone();
+
+                // Update IDs and reset values
+                newInput.find('[id]').each(function() {
+                    var oldId = $(this).attr('id');
+                    var newId = oldId.replace(/_0$/, '_' + inputCounter);
+                    $(this).attr('id', newId);
+                    $(this).val('');
+                });
+
+                // Attach a click event to the remove button
+                newInput.find(".remove-button").click(function() {
+                    newInput.remove();
+                });
+
+                // Append the new input element to the container
+                $("#input-container").append(newInput);
+
+            });
+        });
+    </script>
