@@ -40,6 +40,7 @@
               </div>
               
             </div>
+            <form action="{{ url('/filter-orders') }}" method="get">
             <div class="row">
               <div class="col-md-4">
                 <div class="input-group mb-3">
@@ -61,6 +62,7 @@
                 <button class="btn btn-primary" type="submit">Filter</button>
               </div>
             </div>
+            </form>
           </div>
           <div class="card-body">
             <div class="table-responsive">
