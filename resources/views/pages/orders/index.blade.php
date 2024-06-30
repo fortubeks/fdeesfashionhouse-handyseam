@@ -38,6 +38,28 @@
                   </div>
                 </form>
               </div>
+              
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">FITTING DATE  FROM</span>
+                  </div>
+                  <input name="from_filter" class="form-control" @if(isset($from)) value="{{$from}}" @else value="{{date('Y-m-d')}}" @endif type="date" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">TO</span>
+                  </div>
+                  <input name="to_filter" class="form-control" @if(isset($to)) value="{{$to}}" @else value="{{date('Y-m-d')}}" @endif type="date" required>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary" type="submit">Filter</button>
+              </div>
             </div>
           </div>
           <div class="card-body">
