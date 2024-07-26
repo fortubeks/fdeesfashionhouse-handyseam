@@ -3,7 +3,7 @@
   <div class="container">
     <div class="navbar-wrapper">
     <?php 
-        $default_logo = asset('material'.'/img/logo/handyseam_logo.png');
+        $default_logo = asset('material'.'/img/logo/handyseam_logo.jpg');
         //$appSetting = App\Models\AppSetting::where('user_id', Auth::user()->id)->first();
         $user_logo = "";
         //if($appSetting){

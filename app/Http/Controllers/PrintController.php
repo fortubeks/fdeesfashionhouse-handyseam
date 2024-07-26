@@ -25,8 +25,8 @@ class PrintController extends Controller
     function printMeasurementPdf($customer_id){
         $pdf = FacadesApp::make('dompdf.wrapper');
         $setting = Setting::where('user_id', auth()->user()->user_account_id)->first();
-        $image = $setting->business_logo ?? 'handyseam_logo.png';
-        $logo = asset('/storage/logo_images/'.$image);
+        $image = $setting->business_logo ?? 'handyseam_logo.jpg';
+        $logo = asset('material'.'/img/logo/handyseam_logo.jpg');
         $customer = Customer::find($customer_id);
         $customer_measurement_details = json_decode($customer->measurement_details, true);
         $measurementString = '<!DOCTYPE html>
