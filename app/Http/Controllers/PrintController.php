@@ -138,7 +138,7 @@ class PrintController extends Controller
                                 <table>
                                     <tr>
                                         <td class="title">
-                                            <img src="https://edumaze.io/fdeesfashionhouse.com/wp-content/uploads/2021/10/logo_transparent-3.png" style="width: 100%; max-width: 300px" />
+                                            <img src="'.$logo.'" style="width: 100%; max-width: 300px" />
                                         </td>
                                         <td>
                                         Measurement Details For<br />
