@@ -211,11 +211,10 @@ class OrdersController extends Controller
             $order->expected_delivery_date = $request->expected_delivery_date;
             $order->instructions = $request->instructions;
 
-
             if ($request->outfit) {
                 foreach ($request->outfit as $key => $outfit) {
-
                     $outfit_order = OutfitsOrders::find($outfit);
+
                     if ($outfit_order) {
                         $outfit_order->staff_id = $request->staff_id[$key];
                         $outfit_order->tailor_cost = $request->tailor_cost[$key];
@@ -280,10 +279,10 @@ class OrdersController extends Controller
                             }
                         }
                     }
+                    $outfit_order->save();
                     $total_amount += $request->price[$key] * $qty;
                 }
                 $order->total_amount = $total_amount;
-                $outfit_order->save();
             }
         }
 
