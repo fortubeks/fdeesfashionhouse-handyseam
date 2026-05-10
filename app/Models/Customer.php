@@ -19,7 +19,7 @@ class Customer extends Model
 
     public function orders()
     {
-        return $this->hasMany('App\Models\Order')->orderBy('created_at','desc');
+        return $this->hasMany('App\Models\Order')->orderBy('created_at', 'desc');
     }
 
     public function measurement()
@@ -29,90 +29,97 @@ class Customer extends Model
 
     public function parent()
     {
-        return $this->belongsTo('App\Models\Customer','parent_id');
+        return $this->belongsTo('App\Models\Customer', 'parent_id');
     }
 
     public function relatives()
     {
-        return $this->hasMany('App\Models\Customer','parent_id');
+        return $this->hasMany('App\Models\Customer', 'parent_id');
     }
 
     public function country()
     {
-        return $this->belongsTo('App\Models\Country','country_id');
+        return $this->belongsTo('App\Models\Country', 'country_id');
     }
 
-    public function phoneCode(){
-        if($this->country){
+    public function phoneCode()
+    {
+        if ($this->country) {
             return $this->country->name;
-        } 
+        }
     }
 
-    public static function getAll(){
+    public static function getAll()
+    {
         //get a list of all customers
-        $customers = Customer::orderBy('created_at','desc')->
-        where('user_id','=', auth()->user()->user_account_id)->paginate(10);
+        $customers = Customer::orderBy('created_at', 'desc')->where('user_id', '=', auth()->user()->user_account_id)->paginate(10);
         return $customers;
-   }
+    }
 
-   public function getTotalNumberOfOrders(){
-       $orders = $this->orders;
-       return count($orders);
-   }
+    public function getTotalNumberOfOrders()
+    {
+        $orders = $this->orders;
+        return count($orders);
+    }
 
-   public function getTotalAmountOnAllOrders(){
-    $orders = $this->orders;
-    return formatCurrency($orders->sum('total_amount'));
-    } 
-    
-    public function getUniqueID(){
+    public function getTotalAmountOnAllOrders()
+    {
+        $orders = $this->orders;
+        return formatCurrency($orders->sum('total_amount'));
+    }
+
+    public function getUniqueID()
+    {
         return auth()->user()->user_account_id . '$' . $this->id;
     }
 
-    public function whatsappNumber(){
+    public function whatsappNumber()
+    {
         //if number has space remove it
         $whatsapp_number = removeSpaces($this->phone);
         //if number has 0 as first character remove it
         $whatsapp_number = ltrim($whatsapp_number, '0');
         //if number has + remove it
-        if(substr($whatsapp_number, 0, 1) === '+'){
+        if (substr($whatsapp_number, 0, 1) === '+') {
             return ltrim($whatsapp_number, '+');
         }
-        if($this->country){
-            return $this->country->phonecode.$whatsapp_number;
-        }
-        else{
-            if(auth()->user()->user_account->app_settings->business_currency){
-                $country = Country::where('iso',substr(auth()->user()->user_account->app_settings->business_currency, 0, -1))->first();
-                if($country){
-                    return $country->phonecode.$whatsapp_number;
-                }
-                else{
+        if ($this->country) {
+            return $this->country->phonecode . $whatsapp_number;
+        } else {
+            if (auth()->user()->user_account->app_settings->business_currency) {
+                $country = Country::where('iso', substr(auth()->user()->user_account->app_settings->business_currency, 0, -1))->first();
+                if ($country) {
+                    return $country->phonecode . $whatsapp_number;
+                } else {
                     return $whatsapp_number;
                 }
             }
-            
         }
         //if customer has country code, add country tel code and return
         //if customer not have country code, use user currency to get counrty and code
 
     }
 
-    public function setMeasurement(){
+    public function setMeasurement()
+    {
         $array = json_decode(auth()->user()->user_account->app_settings->measurement_details, true);
         // Fetch corresponding data from the database using Eloquent
+        if ($this->measurement_details != null) {
+            //if the customer has measurement details, use it instead of trying to get it from the old measurement table
+            return;
+        }
         $data = $this->measurement;
-        //dd($array);
+
         // Update the value in the array with the database value
         if ($data) {
             foreach ($array as $key => $item) {
                 $array[$key] = $data->$key;
             }
-        // Encode the updated array back to a JSON string
-        
-        $updatedJsonString = json_encode($array);
-        $this->measurement_details = $updatedJsonString;
-        $this->save();
+            // Encode the updated array back to a JSON string
+
+            $updatedJsonString = json_encode($array);
+            $this->measurement_details = $updatedJsonString;
+            $this->save();
         }
     }
 }
