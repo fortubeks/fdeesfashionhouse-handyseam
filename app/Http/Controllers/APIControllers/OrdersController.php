@@ -30,7 +30,7 @@ class OrdersController extends Controller
         $orders_count = $orders->count();
 
         $view = 'pages.orders.index';
-        return response()->json(compact('orders','orders_sum','orders_count'),200);
+        return response()->json(compact('orders', 'orders_sum', 'orders_count'), 200);
     }
     /**
      * Store a newly created resource in storage.
@@ -46,36 +46,36 @@ class OrdersController extends Controller
             'total_amount' => ['required'],
         ]);
 
-        $vat = auth()->user()->user_account->app_settings->vat/100 * $request->total_amount;
-        
+        $vat = auth()->user()->user_account->app_settings->vat / 100 * $request->total_amount;
+
         $order = new Order;
         $order->customer_id = $request->customer_id;
-        $order->total_amount = $request->total_amount; 
-        $order->vat = $vat; 
+        $order->total_amount = $request->total_amount;
+        $order->vat = $vat;
         $order->order_type = $request->order_type;
         $order->user_id = auth()->user()->user_account_id;
         $order->status = 'Pending Payment';
-        if($request->order_type == 'tailoring'){
+        if ($request->order_type == 'tailoring') {
             $order->expected_delivery_date = $request->expected_delivery_date;
         }
 
         $order->save();
 
-        if($request->order_type == 'tailoring'){
+        if ($request->order_type == 'tailoring') {
             //$order->instruction = session('order_style');
-           
-            foreach(session('outfit_orders') as $key => $outfit){
+
+            foreach (session('outfit_orders') as $key => $outfit) {
                 $outfit_order = new OutfitsOrders;
                 $outfit_order->order_id = $order->id;
                 $outfit_order->user_id = auth()->user()->user_account_id;
 
-                $titles = explode('<?>',$outfit);
+                $titles = explode('<?>', $outfit);
                 $outfit_order->name = $titles[0];
                 $outfit_order->price = $titles[1];
                 $outfit_order->instruction = $titles[2];
                 $outfit_order->qty = $titles[3];
                 $outfit_order->image = $titles[4];
-                if($outfit_order->image == ''){
+                if ($outfit_order->image == '') {
                     $outfit_order->image = 'default.jpg';
                 }
 
@@ -92,26 +92,26 @@ class OrdersController extends Controller
         $invoice->save();
 
         //send sms
-        if($request->order_type == 'tailoring'){
+        if ($request->order_type == 'tailoring') {
             $customer = Customer::findOrFail($request->customer_id);
             $api_key = auth()->user()->user_account->app_settings->sms_api_key;
             $username = auth()->user()->user_account->app_settings->sms_api_username;
             $sender = auth()->user()->user_account->app_settings->sms_sender;
-			$business_name = auth()->user()->user_account->app_settings->business_name;
-            $msg = 'Thank you for your order. Your expected fitting date is '. $order->expected_delivery_date .'. Thank you for choosing '.$business_name;
-            $request_url = 'https://api.ebulksms.com:4433/sendsms?username='.$username.'&apikey='.$api_key.'&sender='.$sender.'&messagetext='.$msg.'&flash=0&recipients='.$customer->phone;
+            $business_name = auth()->user()->user_account->app_settings->business_name;
+            $fitting_date = Carbon::parse($order->expected_delivery_date)->format('jS M Y');
+            $msg = 'Thank you for your order. Your expected fitting date is ' . $fitting_date . '. Thank you for choosing ' . $business_name;
+            $request_url = 'https://api.ebulksms.com:4433/sendsms?username=' . $username . '&apikey=' . $api_key . '&sender=' . $sender . '&messagetext=' . $msg . '&flash=0&recipients=' . $customer->phone;
             $sms_response = "";
-            if ($order->order_type == "tailoring"){
+            if ($order->order_type == "tailoring") {
                 $sms_response = Http::get($request_url);
                 //$customer->notify(new OrderProcessed($order));
             }
         }
 
-        if($request->order_type == 'sales'){
+        if ($request->order_type == 'sales') {
             //add items in cart to items_order table
             $items = session()->get('cart_items');
-            foreach ($items as $key => $item) 
-            {
+            foreach ($items as $key => $item) {
                 $order_item = new OrderItem;
                 $order_item->order_id = $order->id;
                 $order_item->item_id = $item->id;
@@ -125,16 +125,15 @@ class OrdersController extends Controller
                 $_item->inventory_quantity--;
                 $_item->save();
             }
-            
+
             //empty cart
             session()->pull('cart_items');
             session()->pull('customer_id');
             session()->pull('cart_total_amount');
-
         }
-        
-        
-        return response()->json($order,201);
+
+
+        return response()->json($order, 201);
     }
 
     /**
@@ -146,7 +145,7 @@ class OrdersController extends Controller
     public function show($id)
     {
         $order = Order::findOrFail($id);
-        return response()->json($order,200);
+        return response()->json($order, 200);
     }
 
     /**
@@ -157,28 +156,27 @@ class OrdersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {   
+    {
         $order = Order::find($id);
-        
+
         $order->status = $request->status;
-        $order->total_amount = $request->total_amount; 
+        $order->total_amount = $request->total_amount;
         $total_amount = 0;
-        if($request->order_type == 'tailoring'){
+        if ($request->order_type == 'tailoring') {
             $order->expected_delivery_date = $request->expected_delivery_date;
             $order->instructions = $request->instructions;
-           
-            
-			if($request->outfit){
-				foreach($request->outfit as $key => $outfit){
-                    
+
+
+            if ($request->outfit) {
+                foreach ($request->outfit as $key => $outfit) {
+
                     $outfit_order = OutfitsOrders::find($outfit);
-                    if($outfit_order){
+                    if ($outfit_order) {
                         $outfit_order->staff_id = $request->staff_id[$key];
                         $outfit_order->tailor_cost = $request->tailor_cost[$key];
                         $outfit_order->material_cost = $request->material_cost[$key];
                         $outfit_order->customer_id = $request->customer_id[$key];
-                    }
-                    else{
+                    } else {
                         $outfit_order = new OutfitsOrders;
                         $outfit_order->user_id = auth()->user()->user_account_id;
                         $outfit_order->order_id = $order->id;
@@ -186,69 +184,68 @@ class OrdersController extends Controller
 
                     $instruction = $request->instruction[$key];
                     $qty = $request->qty[$key];
-                    if($instruction == ''){
+                    if ($instruction == '') {
                         $instruction = '-';
                     }
-                    if($qty == ''){
+                    if ($qty == '') {
                         $qty = 1;
                     }
-                    
+
                     $outfit_order->name = $request->name[$key];
                     $outfit_order->price = $request->price[$key];
                     $outfit_order->qty = $qty;
                     $outfit_order->instruction = $instruction;
 
-                    if($request->file('styles')){
-                        $allowedfileExtension=['pdf','jpg','png','jpeg'];
-                        foreach ($request->file('styles') as $key_ => $file){
-                            if($key == $key_){
+                    if ($request->file('styles')) {
+                        $allowedfileExtension = ['pdf', 'jpg', 'png', 'jpeg'];
+                        foreach ($request->file('styles') as $key_ => $file) {
+                            if ($key == $key_) {
                                 $filename = $file->getClientOriginalName();
                                 $extension = $file->getClientOriginalExtension();
-                                $check=in_array($extension,$allowedfileExtension);
-                                
-                                if($check)
-                                {              
-                                    $newfilename = time().rand(111, 9999).".". $extension;
+                                $check = in_array($extension, $allowedfileExtension);
+
+                                if ($check) {
+                                    $newfilename = time() . rand(111, 9999) . "." . $extension;
                                     FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
                                     $outfit_order->image = $newfilename;
                                 }
                             }
                         }
-                        
                     }
                     $amount = $outfit_order->qty * $outfit_order->price;
                     $total_amount += $amount;
                     $outfit_order->save();
                 }
-			}
+            }
             $order->total_amount = $total_amount;
         }
-        
+
         $order->save();
-        
-        return response()->json($order,200);
+
+        return response()->json($order, 200);
     }
 
-    public function filter(Request $request){        
+    public function filter(Request $request)
+    {
         $from = $request->from_filter;
         $to = $request->to_filter;
         $search_by = $request->search_by;
-  
+
         $order_query = auth()->user()->user_account->orders()->when($request->query('search_by'), fn(Builder $query, $status) => $query->where('status', $status))
-        ->where('expected_delivery_date','>=',$from)->where('expected_delivery_date','<=',$to);
+            ->where('expected_delivery_date', '>=', $from)->where('expected_delivery_date', '<=', $to);
 
         $orders_sum = $order_query->sum('total_amount');
         $orders_count = $order_query->count();
 
         $orders = $order_query->paginate(15)->appends([
-                'from' => request('from'),
-                'search_by' => request('search_by'),
-                'to' => request('to'),
-                'orders_sum' => $orders_sum,
-                'orders_count' => $orders_count,
-                ]);
+            'from' => request('from'),
+            'search_by' => request('search_by'),
+            'to' => request('to'),
+            'orders_sum' => $orders_sum,
+            'orders_count' => $orders_count,
+        ]);
 
-        return response()->json(compact('orders','from','to','search_by','orders_sum','orders_count'),200);
+        return response()->json(compact('orders', 'from', 'to', 'search_by', 'orders_sum', 'orders_count'), 200);
     }
 
     /**
@@ -260,77 +257,74 @@ class OrdersController extends Controller
     public function destroy($id)
     {
         $order = Order::find($id);
-        
+
         //get the invoice for that order
-        $invoice = Invoice::where('order_id',$order->id)->first();
+        $invoice = Invoice::where('order_id', $order->id)->first();
         //get all the payments for that invoice
-        if($invoice){
-            Payment::where('invoice_id',$invoice->id)->delete();
+        if ($invoice) {
+            Payment::where('invoice_id', $invoice->id)->delete();
             //delete all the payments
             //delete the invoice
             $invoice->delete();
             //delete the order
         }
-        
-        
+
+
         $order->delete();
         return response()->json(null, 204);
     }
 
-    public function addStyleToOrder(Request $request){
+    public function addStyleToOrder(Request $request)
+    {
         $total_amount_less_vat = 0;
-        if (!session()->has('outfit_orders')){
+        if (!session()->has('outfit_orders')) {
             session()->put('outfit_orders', []);
         }
-        if($request->style_names)
-        {
-            $allowedfileExtension=['pdf','jpg','png','jpeg'];
-            foreach ($request->style_names as $key_=>$style){
+        if ($request->style_names) {
+            $allowedfileExtension = ['pdf', 'jpg', 'png', 'jpeg'];
+            foreach ($request->style_names as $key_ => $style) {
                 $instruction = $request->instruction[$key_];
                 $qty = $request->qty[$key_];
-                if($instruction == ''){
+                if ($instruction == '') {
                     $instruction = '-';
                 }
-                if($qty == ''){
+                if ($qty == '') {
                     $qty = 1;
                 }
-                $style_and_image_string = $style.'<?>'.$request->price[$key_].'<?>'.$instruction.'<?>'.$qty.'<?>';
+                $style_and_image_string = $style . '<?>' . $request->price[$key_] . '<?>' . $instruction . '<?>' . $qty . '<?>';
                 $amount = $request->price[$key_] * $qty;
                 $total_amount_less_vat += $amount;
-                if($request->file('styles')){
-                    foreach ($request->file('styles') as $key => $file){
-                        if($key == $key_){
+                if ($request->file('styles')) {
+                    foreach ($request->file('styles') as $key => $file) {
+                        if ($key == $key_) {
                             $filename = $file->getClientOriginalName();
                             $extension = $file->getClientOriginalExtension();
-                            $check=in_array($extension,$allowedfileExtension);
-                            
-                            if($check)
-                            {              
-                                $newfilename = time().rand(111, 9999).".". $extension;
+                            $check = in_array($extension, $allowedfileExtension);
+
+                            if ($check) {
+                                $newfilename = time() . rand(111, 9999) . "." . $extension;
                                 FacadesStorage::disk('styles')->put($newfilename, file_get_contents($file));
                                 $style_and_image_string .= $newfilename;
                                 $file_uploaded = 1;
                             }
                         }
                     }
-                    
-                }
-                else{
+                } else {
                     $style_and_image_string .= 'default.jpg';
                 }
                 session()->push('outfit_orders', $style_and_image_string);
-            }               
+            }
         }
-        
+
         $customer = Customer::find(session('customer_id'));
         $total_amount = $total_amount_less_vat;
-        
+
         return response()->json('Success', 201);
     }
 
     public function addItemToCart($item_id)
-    {   
-        if (!session()->has('cart_items')){
+    {
+        if (!session()->has('cart_items')) {
             session()->put('cart_items', []);
             session()->put('cart_total_amount', 0);
         }
@@ -344,15 +338,12 @@ class OrdersController extends Controller
         return response()->json(session('cart_items'), 201);
     }
     public function removeItemFromCart($item_id)
-    {   
-        if (session()->has('cart_items'))
-        {
+    {
+        if (session()->has('cart_items')) {
             $items = session()->get('cart_items');
             $total_amount  = session()->get('cart_total_amount');
-            foreach ($items as $key => $item) 
-            {
-                if ($item->id == $item_id)
-                {
+            foreach ($items as $key => $item) {
+                if ($item->id == $item_id) {
                     unset($items[$key]);
                     $total_amount -= $item->price;
                     break;
@@ -363,5 +354,4 @@ class OrdersController extends Controller
         }
         return response()->json(session('cart_items'), 201);
     }
-
 }

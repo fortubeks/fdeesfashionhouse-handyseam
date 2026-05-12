@@ -15,6 +15,7 @@ use App\Models\Payment;
 use App\Models\OutfitsOrders;
 use Illuminate\Support\Facades\Storage as FacadesStorage;
 use App\Notifications\OrderProcessed;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Http;
 
@@ -120,7 +121,8 @@ class OrdersController extends Controller
             $username = 'fdeesfashionhouse@gmail.com';
             $sender = 'Fdees';
             $business_name = $user_account_settings->business_name;
-            $msg = 'Thank you for your order. Your expected fitting date is ' . $order->expected_delivery_date . '. Thank you for choosing ' . $business_name;
+            $fitting_date = Carbon::parse($order->expected_delivery_date)->format('jS M Y');
+            $msg = 'Thank you for your order. Your expected fitting date is ' . $fitting_date . '. Thank you for choosing ' . $business_name;
             $request_url = 'https://api.ebulksms.com:443/sendsms?username=' . $username . '&apikey=' . $api_key . '&sender=' . $sender . '&messagetext=' . $msg . '&flash=0&recipients=' . $customer->phone;
             $sms_response = "";
             if ($order->order_type == "tailoring") {
